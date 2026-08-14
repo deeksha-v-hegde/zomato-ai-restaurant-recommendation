@@ -1,5 +1,6 @@
 data/cache/*
 !data/cache/.gitkeep
+!data/cache/restaurants_clean.json
 __pycache__/
 *.pyc
 .pytest_cache/
