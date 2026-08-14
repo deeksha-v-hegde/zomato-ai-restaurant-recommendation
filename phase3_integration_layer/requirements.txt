@@ -1,0 +1,2 @@
+# Phase 3 has no third-party dependencies.
+# It reads Phase 1 clean store and accepts Phase 2 validated preferences.

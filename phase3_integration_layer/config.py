@@ -1,0 +1,23 @@
+"""Configuration for Phase 3: Integration Layer."""
+
+from pathlib import Path
+
+PHASE3_ROOT = Path(__file__).resolve().parent
+PROJECT_ROOT = PHASE3_ROOT.parent
+PHASE1_CLEAN_STORE = (
+    PROJECT_ROOT / "phase1_data_ingestion" / "data" / "cache" / "restaurants_clean.json"
+)
+
+# IL-03: cap shortlist before prompting
+MAX_CANDIDATES = 25
+
+# IL-08: keep prompts within a safe size for downstream LLM context
+MAX_PROMPT_CHARS = 12000
+MAX_CANDIDATES_AFTER_TRUNCATION = 15
+
+# Budget band thresholds (aligned with Phase 1 — IL-04)
+BUDGET_LOW_MAX = 300
+BUDGET_MEDIUM_MAX = 700
+
+# How many top recommendations Phase 4 should return
+TOP_N_RECOMMENDATIONS = 5

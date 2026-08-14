@@ -1,0 +1,38 @@
+[theme]
+base = "light"
+
+# Zomato-inspired palette
+primaryColor = "#E23744"
+backgroundColor = "#FFF8F6"
+secondaryBackgroundColor = "#FFFFFF"
+textColor = "#1C1C1C"
+linkColor = "#E23744"
+
+# Softer borders
+borderColor = "#E6E6E6"
+
+# Modern rounded UI
+baseRadius = "12px"
+buttonRadius = "10px"
+
+# Typography
+font = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
+headingFont = "Inter:https://fonts.googleapis.com/css2?family=Inter:wght@600;700;800&display=swap"
+
+# Better visual hierarchy
+headingFontSizes = [
+    "2.5rem",
+    "1.65rem",
+    "1.25rem",
+    "1.05rem",
+    "0.95rem",
+    "0.85rem"
+]
+
+# Custom colors
+redColor = "#E23744"
+grayColor = "#6B6F7A"
+
+[server]
+headless = true
+runOnSave = true
