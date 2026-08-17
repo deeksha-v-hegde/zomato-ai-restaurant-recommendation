@@ -36,3 +36,5 @@ grayColor = "#6B6F7A"
 [server]
 headless = true
 runOnSave = true
+fileWatcherType = "none"
+
