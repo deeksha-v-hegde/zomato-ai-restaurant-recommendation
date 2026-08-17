@@ -564,6 +564,9 @@ with st.container(border=True):
             st.session_state.selected_moods = []
             st.session_state.selected_amenities = []
             st.session_state.prompt_text = ""
+            st.session_state.pop("search_result", None)
+            st.session_state.pop("search_error", None)
+            st.session_state.pop("resolved_display_loc", None)
             st.rerun()
 
     col_f1, col_f2, col_f3, col_f4, col_f5 = st.columns(5)
@@ -691,41 +694,49 @@ with st.container(border=True):
 
         st.html("</div>")
 
-# --- EXECUTE RECOMMENDATION SEARCH AUTOMATICALLY ON CONTROL CHANGES ---
-if "Budget Friendly" in st.session_state.sel_budget:
-    budget_param = "low"
-elif "Luxury" in st.session_state.sel_budget:
-    budget_param = "high"
-else:
-    budget_param = "medium"
+# --- EXECUTE RECOMMENDATION SEARCH ONLY ON EXPLICIT SUBMISSION ---
+if submitted:
+    if "Budget Friendly" in st.session_state.sel_budget:
+        budget_param = "low"
+    elif "Luxury" in st.session_state.sel_budget:
+        budget_param = "high"
+    else:
+        budget_param = "medium"
 
-min_rating_val = 0.0
-if "3.5+" in st.session_state.sel_rating: min_rating_val = 3.5
-elif "4.0+" in st.session_state.sel_rating: min_rating_val = 4.0
-elif "4.5+" in st.session_state.sel_rating: min_rating_val = 4.5
+    min_rating_val = 0.0
+    if "3.5+" in st.session_state.sel_rating: min_rating_val = 3.5
+    elif "4.0+" in st.session_state.sel_rating: min_rating_val = 4.0
+    elif "4.5+" in st.session_state.sel_rating: min_rating_val = 4.5
 
-resolved_display_loc = resolve_location_for_search(ctx, st.session_state.sel_location, st.session_state.sel_cuisine)
+    resolved_display_loc = resolve_location_for_search(ctx, st.session_state.sel_location, st.session_state.sel_cuisine)
 
-combined_prefs = f"{st.session_state.prompt_text} {st.session_state.sel_diet} {st.session_state.sel_mode} {st.session_state.sel_spice} {' '.join(st.session_state.selected_moods)} {' '.join(st.session_state.selected_amenities)}"
+    combined_prefs = f"{st.session_state.prompt_text} {st.session_state.sel_diet} {st.session_state.sel_mode} {st.session_state.sel_spice} {' '.join(st.session_state.selected_moods)} {' '.join(st.session_state.selected_amenities)}"
 
-search_input_obj = SearchInput(
-    location=st.session_state.sel_location,
-    budget=budget_param,
-    cuisine=st.session_state.sel_cuisine,
-    min_rating=min_rating_val,
-    additional_preferences=combined_prefs.strip() or None,
-)
+    search_input_obj = SearchInput(
+        location=st.session_state.sel_location,
+        budget=budget_param,
+        cuisine=st.session_state.sel_cuisine,
+        min_rating=min_rating_val,
+        additional_preferences=combined_prefs.strip() or None,
+    )
 
-try:
-    with st.spinner(f"Finding top AI recommendation matches for {st.session_state.sel_cuisine} in {resolved_display_loc}..."):
-        search_result = run_search(search_input_obj)
-        search_error = None
-except PreferenceValidationError as exc:
-    search_result = None
-    search_error = [f"{detail.field}: {detail.message}" for detail in validation_error_details(exc)]
-except Exception as exc:
-    search_result = None
-    search_error = [f"Search failed: {exc}"]
+    try:
+        with st.spinner(f"Finding top AI recommendation matches for {st.session_state.sel_cuisine} in {resolved_display_loc}..."):
+            st.session_state.search_result = run_search(search_input_obj)
+            st.session_state.search_error = None
+            st.session_state.resolved_display_loc = resolved_display_loc
+    except PreferenceValidationError as exc:
+        st.session_state.search_result = None
+        st.session_state.search_error = [f"{detail.field}: {detail.message}" for detail in validation_error_details(exc)]
+        st.session_state.resolved_display_loc = resolved_display_loc
+    except Exception as exc:
+        st.session_state.search_result = None
+        st.session_state.search_error = [f"Search failed: {exc}"]
+        st.session_state.resolved_display_loc = resolved_display_loc
+
+search_result = st.session_state.get("search_result")
+search_error = st.session_state.get("search_error")
+resolved_display_loc = st.session_state.get("resolved_display_loc")
 
 # --- DISPLAY TOP 5 REFERENCE CARD RECOMMENDATIONS ---
 if search_error:
@@ -829,3 +840,5 @@ elif search_result is not None:
             """
 
             st.html(card_html)
+else:
+    st.info("💡 Tell us what you're craving or pick your preferences above, then click **✨ Recommend Top Picks** to get AI-powered recommendations.", icon="ℹ️")

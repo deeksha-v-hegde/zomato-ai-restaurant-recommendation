@@ -44,6 +44,12 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(result.state, "results")
         mock_ctx.service.recommend.assert_called_once()
 
+    @patch("phase4_recommendation_engine.groq_client.GroqLLMClient.complete")
+    def test_load_runtime_does_not_call_groq_api(self, mock_complete: MagicMock) -> None:
+        load_runtime.cache_clear()
+        load_runtime()
+        mock_complete.assert_not_called()
+
 
 if __name__ == "__main__":
     unittest.main()
