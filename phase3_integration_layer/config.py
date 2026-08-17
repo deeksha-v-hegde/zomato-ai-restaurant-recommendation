@@ -8,12 +8,13 @@ PHASE1_CLEAN_STORE = (
     PROJECT_ROOT / "phase1_data_ingestion" / "data" / "cache" / "restaurants_clean.json"
 )
 
-# IL-03: cap shortlist before prompting
-MAX_CANDIDATES = 25
+# IL-03: cap shortlist before prompting to stay well within Groq rate limits
+MAX_CANDIDATES = 10
 
 # IL-08: keep prompts within a safe size for downstream LLM context
-MAX_PROMPT_CHARS = 12000
-MAX_CANDIDATES_AFTER_TRUNCATION = 15
+MAX_PROMPT_CHARS = 6000
+MAX_CANDIDATES_AFTER_TRUNCATION = 10
+
 
 # Budget band thresholds (aligned with Phase 1 — IL-04)
 BUDGET_LOW_MAX = 300
