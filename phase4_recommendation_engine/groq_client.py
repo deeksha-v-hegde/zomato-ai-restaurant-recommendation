@@ -28,11 +28,6 @@ _dotenv_loaded = False
 
 def load_env_file() -> None:
     """Load project-root .env into os.environ when present."""
-    global _dotenv_loaded
-    if _dotenv_loaded:
-        return
-    _dotenv_loaded = True
-
     if not ENV_FILE.exists():
         return
 
@@ -42,8 +37,9 @@ def load_env_file() -> None:
         logger.debug("python-dotenv not installed; skipping .env load.")
         return
 
-    load_dotenv(ENV_FILE)
+    load_dotenv(ENV_FILE, override=True)
     logger.debug("Loaded environment from %s", ENV_FILE)
+
 
 
 def get_groq_api_key() -> str:

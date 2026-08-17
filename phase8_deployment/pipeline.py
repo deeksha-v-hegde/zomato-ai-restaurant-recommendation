@@ -93,7 +93,9 @@ def resolve_location_for_search(ctx: AppContext, requested_location: str, reques
 
 
 def run_search(search: SearchInput) -> RecommendResponse:
+    load_env_file()
     ctx = load_runtime()
+
     resolved_loc = resolve_location_for_search(ctx, search.location, search.cuisine)
     request = RecommendRequest(
         location=resolved_loc,
