@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: zomato-ai-backend
+    env: python
+    region: singapore # or oregon / frankfurt
+    plan: free
+    buildCommand: pip install -r phase6_backend_api/requirements.txt
+    startCommand: uvicorn phase6_backend_api.app.main:app --host 0.0.0.0 --port $PORT
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.10.12
+      - key: GROQ_API_KEY
+        sync: false
+      - key: CORS_ORIGINS
+        value: "https://*.vercel.app,http://localhost:5173"
