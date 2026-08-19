@@ -22,7 +22,10 @@ def _parse_cors_origins() -> list[str]:
     raw = os.environ.get("CORS_ORIGINS", "").strip()
     if not raw:
         return list(DEFAULT_CORS_ORIGINS)
-    return [origin.strip() for origin in raw.split(",") if origin.strip()]
+    parsed = [origin.strip() for origin in raw.split(",") if origin.strip()]
+    if any("*" in origin for origin in parsed):
+        return ["*"]
+    return parsed
 
 
 @asynccontextmanager
