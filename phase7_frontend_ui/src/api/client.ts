@@ -6,7 +6,12 @@ import type {
   ValidationErrorDetail,
 } from "../types/api";
 
-const API_BASE = import.meta.env.VITE_API_BASE_URL ?? "";
+const DEFAULT_BACKEND_URL = "https://zomato-ai-backend-yf4c.onrender.com";
+
+const API_BASE = (
+  import.meta.env.VITE_API_BASE_URL ||
+  (import.meta.env.PROD ? DEFAULT_BACKEND_URL : "")
+).replace(/\/$/, "");
 
 async function parseError(response: Response): Promise<ApiError> {
   try {
