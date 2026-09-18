@@ -454,7 +454,7 @@ def render_header() -> None:
                 <div class="brand-logo-icon">🍽️</div>
                 <div>
                     <div class="brand-product-title">AI Restaurant Finder</div>
-                    <div class="brand-product-sub">Personalized restaurant recommendations powered by AI</div>
+                    <div class="brand-product-sub">Personalized dining recommendations</div>
                 </div>
             </div>
             <div>
@@ -466,13 +466,13 @@ def render_header() -> None:
 
 
 def render_hero() -> None:
-    """Render compact hero section."""
+    """Render compact customer-focused hero section."""
     st.html(
         """
         <div class="hero-wrap">
             <div class="hero-title">Find a restaurant you'll actually love.</div>
             <div class="hero-desc">
-                Tell us where you're dining, what you want to eat, and your budget. Our AI will find the best matches for you.
+                Tell us where you're dining, what you're craving, and your budget. We'll find restaurants that match.
             </div>
         </div>
         """
@@ -503,45 +503,15 @@ def render_sidebar(ctx: AppContext) -> None:
         st.html(
             """
             <div class="sidebar-brand-title">🍽️ AI Restaurant Finder</div>
-            <div class="sidebar-brand-sub">Intelligent Dining Recommendations</div>
+            <div class="sidebar-brand-sub">Personalized dining recommendations</div>
             """
         )
-
-        st.markdown("**HOW IT WORKS**")
-        st.html(
-            """
-            <div class="step-item">
-                <span class="step-num">01</span>
-                <span>Tell us what you're looking for</span>
-            </div>
-            <div class="step-item">
-                <span class="step-num">02</span>
-                <span>AI finds matching restaurants</span>
-            </div>
-            <div class="step-item">
-                <span class="step-num">03</span>
-                <span>Get personalized recommendations</span>
-            </div>
-            """
-        )
-
-        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
-
-        with st.expander("Catalog Scope", expanded=False):
-            st.caption("Preprocessed & verified Zomato dining catalog:")
-            st.write(
-                f"- **City**: Bengaluru\n"
-                f"- **Catalog Records**: {ctx.status.restaurant_count:,}\n"
-                f"- **Neighborhoods**: {len(ctx.catalog.locations)}\n"
-                f"- **Cuisines**: {len(ctx.catalog.cuisines)}"
-            )
 
         default_location = (
             "Koramangala 5th Block"
             if "Koramangala 5th Block" in ctx.catalog.locations
             else ctx.catalog.locations[0]
         )
-        st.markdown("---")
         st.button(
             "🔄 Reset Search Preferences",
             use_container_width=True,
@@ -549,6 +519,11 @@ def render_sidebar(ctx: AppContext) -> None:
             args=(default_location,),
             key="btn_reset_preferences",
         )
+
+        with st.expander("ℹ️ About this project", expanded=False):
+            st.caption(
+                "Discover curated restaurants in Bengaluru tailored to your dining vibe, cuisine cravings, budget, and ratings powered by AI."
+            )
 
 
 def render_quick_inspiration() -> None:
@@ -605,8 +580,8 @@ def render_search_panel(ctx: AppContext) -> bool:
     ]
 
     with st.container(border=True):
-        # Section 1: Where & How Much
-        st.html("<div class='section-header-tag'>📍 WHERE & HOW MUCH</div>")
+        # Section 1: Where Are You Dining?
+        st.html("<div class='section-header-tag'>📍 WHERE ARE YOU DINING?</div>")
         r1_col1, r1_col2 = st.columns(2)
         with r1_col1:
             st.selectbox(
@@ -624,8 +599,8 @@ def render_search_panel(ctx: AppContext) -> bool:
 
         st.html("<div style='height: 4px;'></div>")
 
-        # Section 2: Flavors & Standards
-        st.html("<div class='section-header-tag'>🍴 FLAVORS & STANDARDS</div>")
+        # Section 2: What Are You In The Mood For?
+        st.html("<div class='section-header-tag'>🍴 WHAT ARE YOU IN THE MOOD FOR?</div>")
         r2_col1, r2_col2 = st.columns(2)
         with r2_col1:
             st.selectbox(
@@ -643,8 +618,8 @@ def render_search_panel(ctx: AppContext) -> bool:
 
         st.html("<div style='height: 4px;'></div>")
 
-        # Section 3: Specific Vibe & Cravings
-        st.html("<div class='section-header-tag'>✨ SPECIFIC VIBE & CRAVINGS</div>")
+        # Section 3: Anything Else?
+        st.html("<div class='section-header-tag'>✨ ANYTHING ELSE?</div>")
         st.text_input(
             "Additional Preferences",
             placeholder="e.g., quiet romantic dinner, authentic woodfired pizza, outdoor garden seating...",
@@ -674,7 +649,7 @@ def render_search_summary(
     cuisine: str,
     rating_label: str,
     count: int,
-    used_fallback: bool,
+    used_fallback: bool = False,
 ) -> None:
     """Render clean search summary above recommendation results."""
     # Clean budget display string
@@ -751,13 +726,13 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
         </div>
 
         <div class="ai-reasoning-container">
-            <div class="ai-reasoning-title">✨ WHY AI RECOMMENDS THIS</div>
+            <div class="ai-reasoning-title">✨ WHY THIS MATCHES</div>
             <div class="ai-reasoning-body">"{html.escape(explanation)}"</div>
         </div>
 
         <div class="card-tags-footer">
             <span class="tag-pill">{html.escape(first_cuisine)}</span>
-            <span class="tag-pill">{html.escape(rating)} ★</span>
+            <span class="tag-pill">⭐ {html.escape(rating)}</span>
             <span class="tag-pill">{html.escape(tier_symbol)}</span>
             <span class="tag-pill">📍 {html.escape(loc)}</span>
         </div>
@@ -804,6 +779,14 @@ def render_developer_details(res: RecommendResponse, ctx: AppContext) -> None:
         with d_col3:
             st.caption("Reasoning Model")
             st.write(f"`{res.llm_model or 'Deterministic Heuristic'}`")
+
+        st.caption("Catalog Scope:")
+        st.write(
+            f"- City: Bengaluru\n"
+            f"- Records: **{ctx.status.restaurant_count:,}**\n"
+            f"- Neighborhoods: **{len(ctx.catalog.locations)}**\n"
+            f"- Cuisines: **{len(ctx.catalog.cuisines)}**"
+        )
 
         if res.filter_diagnostics:
             fd = res.filter_diagnostics
