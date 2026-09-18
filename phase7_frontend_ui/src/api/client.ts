@@ -6,7 +6,8 @@ import type {
   ValidationErrorDetail,
 } from "../types/api";
 
-const DEFAULT_BACKEND_URL = "https://zomato-ai-backend-yf4c.onrender.com";
+const DEFAULT_BACKEND_URL = "https://zomato-ai-restaurant-recommendation-7zgc.onrender.com";
+
 
 const API_BASE = (
   import.meta.env.VITE_API_BASE_URL ||
