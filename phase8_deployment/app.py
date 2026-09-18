@@ -41,31 +41,35 @@ st.set_page_config(
 
 # --- CENTRALIZED STYLING & DESIGN SYSTEM ---
 def inject_custom_css() -> None:
-    """Inject modern, restrained CSS for an AI consumer food discovery product."""
+    """Inject modern, premium light-theme CSS for an AI consumer food discovery product."""
     st.html(
         """
         <style>
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap');
 
         :root {
-            --brand-primary: #E23744;
-            --brand-primary-hover: #CB202D;
-            --brand-light: #FFF5F5;
+            --brand-primary: #E11D48;
+            --brand-primary-hover: #BE123C;
+            --brand-light: #FFF1F2;
             --brand-border: #FECDD3;
-            --bg-page: #FAFAF9;
+            --bg-page: #F8FAFC;
             --surface-card: #FFFFFF;
-            --text-heading: #18181B;
-            --text-body: #3F3F46;
-            --text-muted: #71717A;
-            --border-subtle: #E4E4E7;
-            --rating-green: #15803D;
+            --text-heading: #0F172A;
+            --text-body: #334155;
+            --text-muted: #64748B;
+            --border-subtle: #E2E8F0;
+            --rating-green: #059669;
             --rating-bg: #DCFCE7;
+            --shadow-sm: 0 1px 2px 0 rgba(0, 0, 0, 0.04);
+            --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.05), 0 2px 6px -1px rgba(0, 0, 0, 0.02);
+            --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.08), 0 4px 10px -2px rgba(0, 0, 0, 0.03);
         }
 
         /* Base Typography */
         html, body, [class*="css"] {
             font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
             color: var(--text-body);
+            -webkit-font-smoothing: antialiased;
         }
 
         .stApp {
@@ -80,7 +84,7 @@ def inject_custom_css() -> None:
         .block-container {
             max-width: 900px !important;
             padding-top: 4.5rem !important;
-            padding-bottom: 4rem !important;
+            padding-bottom: 4.5rem !important;
         }
 
         @media (max-width: 768px) {
@@ -90,7 +94,7 @@ def inject_custom_css() -> None:
                 padding-top: 4rem !important;
             }
             .hero-title {
-                font-size: 1.65rem !important;
+                font-size: 1.75rem !important;
             }
         }
 
@@ -99,39 +103,40 @@ def inject_custom_css() -> None:
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.25rem 0 1rem 0;
+            padding: 0.25rem 0 1.15rem 0;
             border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
         }
 
         .brand-logo-area {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
         }
 
         .brand-logo-icon {
             font-size: 1.5rem;
-            background: #FFF1F2;
+            background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
             border: 1px solid var(--brand-border);
-            width: 40px;
-            height: 40px;
-            border-radius: 10px;
+            width: 44px;
+            height: 44px;
+            border-radius: 12px;
             display: flex;
             align-items: center;
             justify-content: center;
+            box-shadow: 0 2px 6px rgba(225, 29, 72, 0.08);
         }
 
         .brand-product-title {
-            font-size: 1.25rem;
-            font-weight: 800;
+            font-size: 1.3rem;
+            font-weight: 850;
             color: var(--text-heading);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
             line-height: 1.2;
         }
 
         .brand-product-sub {
-            font-size: 0.8rem;
+            font-size: 0.82rem;
             color: var(--text-muted);
             font-weight: 500;
         }
@@ -140,49 +145,66 @@ def inject_custom_css() -> None:
             background: #FFF1F2;
             color: var(--brand-primary);
             border: 1px solid var(--brand-border);
-            font-size: 0.72rem;
-            font-weight: 700;
-            padding: 3px 10px;
+            font-size: 0.74rem;
+            font-weight: 750;
+            padding: 4px 12px;
             border-radius: 20px;
-            letter-spacing: 0.03em;
+            letter-spacing: 0.04em;
+            box-shadow: 0 1px 3px rgba(225, 29, 72, 0.06);
         }
 
         /* Compact Hero Section */
         .hero-wrap {
             text-align: left;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .hero-badge-tag {
+            display: inline-block;
+            font-size: 0.72rem;
+            font-weight: 750;
+            color: var(--brand-primary);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            margin-bottom: 0.45rem;
         }
 
         .hero-title {
-            font-size: 2.1rem;
-            font-weight: 800;
+            font-size: 2.25rem;
+            font-weight: 850;
             color: var(--text-heading);
-            letter-spacing: -0.03em;
-            line-height: 1.25;
-            margin-bottom: 0.35rem;
+            letter-spacing: -0.035em;
+            line-height: 1.2;
+            margin-bottom: 0.5rem;
+        }
+
+        .hero-title-gradient {
+            background: linear-gradient(135deg, #E11D48 0%, #EA580C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
         }
 
         .hero-desc {
-            font-size: 0.95rem;
+            font-size: 0.96rem;
             color: var(--text-muted);
-            line-height: 1.5;
-            max-width: 680px;
+            line-height: 1.55;
+            max-width: 720px;
         }
 
         /* Search Panel Container */
         div[data-testid="stVerticalBlockBorderWrapper"] {
             background: var(--surface-card) !important;
             border: 1px solid var(--border-subtle) !important;
-            border-radius: 16px !important;
-            padding: 1.25rem 1.5rem !important;
-            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03) !important;
+            border-radius: 18px !important;
+            padding: 1.5rem 1.65rem !important;
+            box-shadow: var(--shadow-md) !important;
             margin-bottom: 1.5rem !important;
         }
 
         .section-header-tag {
             font-size: 0.76rem;
             font-weight: 800;
-            color: #4B5563;
+            color: #475569;
             letter-spacing: 0.06em;
             text-transform: uppercase;
             margin-bottom: 0.45rem;
@@ -192,46 +214,109 @@ def inject_custom_css() -> None:
         }
 
         .craving-title {
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 800;
             color: var(--brand-primary);
-            letter-spacing: 0.05em;
+            letter-spacing: 0.06em;
             text-transform: uppercase;
-            margin: 0.6rem 0 0.35rem 0;
+            margin: 0.75rem 0 0.4rem 0;
+        }
+
+        /* Streamlit Input & Selectbox Styling */
+        div[data-baseweb="select"] > div {
+            background-color: #F8FAFC !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 10px !important;
+            transition: all 0.15s ease !important;
+        }
+
+        div[data-baseweb="select"] > div:hover {
+            border-color: #CBD5E1 !important;
+            background-color: #FFFFFF !important;
+        }
+
+        div[data-baseweb="select"] > div:focus-within {
+            border-color: var(--brand-primary) !important;
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12) !important;
+            background-color: #FFFFFF !important;
+        }
+
+        div[data-baseweb="input"] > div {
+            background-color: #F8FAFC !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 10px !important;
+            transition: all 0.15s ease !important;
+        }
+
+        div[data-baseweb="input"] > div:hover {
+            border-color: #CBD5E1 !important;
+            background-color: #FFFFFF !important;
+        }
+
+        div[data-baseweb="input"] > div:focus-within {
+            border-color: var(--brand-primary) !important;
+            box-shadow: 0 0 0 3px rgba(225, 29, 72, 0.12) !important;
+            background-color: #FFFFFF !important;
+        }
+
+        /* Quick Craving Buttons */
+        div.stButton > button[key^="chip_"] {
+            background: #F8FAFC !important;
+            color: #334155 !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 10px !important;
+            font-size: 0.82rem !important;
+            font-weight: 600 !important;
+            padding: 0.45rem 0.65rem !important;
+            transition: all 0.18s ease !important;
+            box-shadow: var(--shadow-sm) !important;
+        }
+
+        div.stButton > button[key^="chip_"]:hover {
+            border-color: var(--brand-border) !important;
+            color: var(--brand-primary) !important;
+            background: #FFF1F2 !important;
+            transform: translateY(-1px) !important;
+            box-shadow: 0 4px 10px rgba(225, 29, 72, 0.08) !important;
         }
 
         /* Full-Width Primary CTA */
         div.stButton > button[kind="primary"] {
-            background: linear-gradient(135deg, #E23744 0%, #EA580C 100%) !important;
+            background: linear-gradient(135deg, #E11D48 0%, #EA580C 100%) !important;
             color: #FFFFFF !important;
             border: none !important;
-            font-weight: 700 !important;
-            font-size: 1rem !important;
+            font-weight: 750 !important;
+            font-size: 1.02rem !important;
+            letter-spacing: -0.01em !important;
             border-radius: 12px !important;
-            padding: 0.65rem 1.5rem !important;
-            box-shadow: 0 4px 14px rgba(226, 55, 68, 0.25) !important;
-            transition: all 0.2s ease !important;
-            margin-top: 0.4rem !important;
+            padding: 0.75rem 1.5rem !important;
+            box-shadow: 0 4px 16px rgba(225, 29, 72, 0.28) !important;
+            transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1) !important;
+            margin-top: 0.5rem !important;
         }
 
         div.stButton > button[kind="primary"]:hover {
-            box-shadow: 0 6px 20px rgba(226, 55, 68, 0.35) !important;
-            transform: translateY(-1px) !important;
+            box-shadow: 0 8px 24px rgba(225, 29, 72, 0.38) !important;
+            transform: translateY(-2px) !important;
+        }
+
+        div.stButton > button[kind="primary"]:active {
+            transform: translateY(0px) !important;
         }
 
         /* Search Summary Header */
         .picks-header-title {
-            font-size: 1.3rem;
-            font-weight: 800;
+            font-size: 1.35rem;
+            font-weight: 850;
             color: var(--text-heading);
-            letter-spacing: -0.02em;
-            margin-bottom: 0.15rem;
+            letter-spacing: -0.025em;
+            margin-bottom: 0.2rem;
         }
 
         .picks-header-sub {
-            font-size: 0.88rem;
+            font-size: 0.9rem;
             color: var(--text-muted);
-            margin-bottom: 0.75rem;
+            margin-bottom: 0.85rem;
         }
 
         .summary-pill-container {
@@ -239,52 +324,58 @@ def inject_custom_css() -> None:
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            margin-bottom: 1.25rem;
+            margin-bottom: 1.35rem;
         }
 
         .summary-badge {
             background: #FFFFFF;
             border: 1px solid var(--border-subtle);
-            color: #27272A;
+            color: #1E293B;
             font-size: 0.82rem;
             font-weight: 600;
-            padding: 4px 10px;
+            padding: 5px 12px;
             border-radius: 8px;
             display: inline-flex;
             align-items: center;
             gap: 5px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: var(--shadow-sm);
         }
 
         /* Restaurant Cards */
         .recommendation-card {
             background: var(--surface-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 14px;
+            border-radius: 16px;
             padding: 0;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
-            transition: transform 0.15s ease, box-shadow 0.15s ease;
+            margin-bottom: 1.35rem;
+            box-shadow: var(--shadow-sm);
+            transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s cubic-bezier(0.16, 1, 0.3, 1), border-color 0.2s ease;
             overflow: hidden;
         }
 
         .recommendation-card:hover {
-            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
+            box-shadow: var(--shadow-lg);
+            transform: translateY(-3px);
+            border-color: #CBD5E1;
         }
 
         .top-tier-card {
             border: 1.5px solid var(--brand-border);
-            box-shadow: 0 4px 18px rgba(226, 55, 68, 0.08);
+            box-shadow: 0 6px 20px rgba(225, 29, 72, 0.08);
             background: #FFFFFF;
+        }
+
+        .top-tier-card:hover {
+            box-shadow: 0 12px 30px rgba(225, 29, 72, 0.14);
+            border-color: #FDA4AF;
         }
 
         .card-img-wrap {
             width: 100%;
-            height: 160px;
+            height: 165px;
             overflow: hidden;
             position: relative;
-            background-color: #F4F4F5;
+            background-color: #F1F5F9;
         }
 
         .card-restaurant-img {
@@ -293,17 +384,17 @@ def inject_custom_css() -> None:
             object-fit: cover;
             object-position: center;
             display: block;
-            border-top-left-radius: 13px;
-            border-top-right-radius: 13px;
-            transition: transform 0.3s ease;
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            transition: transform 0.4s ease;
         }
 
         .recommendation-card:hover .card-restaurant-img {
-            transform: scale(1.02);
+            transform: scale(1.03);
         }
 
         .card-content-wrap {
-            padding: 1.15rem 1.35rem 1.25rem 1.35rem;
+            padding: 1.25rem 1.45rem 1.35rem 1.45rem;
         }
 
         .card-top-bar {
@@ -321,22 +412,31 @@ def inject_custom_css() -> None:
 
         .rank-label-top {
             color: var(--brand-primary);
+            background: #FFF1F2;
+            border: 1px solid var(--brand-border);
             font-weight: 800;
-            font-size: 0.88rem;
-            letter-spacing: -0.01em;
+            font-size: 0.78rem;
+            letter-spacing: 0.03em;
+            padding: 2px 8px;
+            border-radius: 6px;
+            text-transform: uppercase;
         }
 
         .rank-label-normal {
             color: var(--text-muted);
-            font-weight: 700;
-            font-size: 0.88rem;
+            background: #F1F5F9;
+            border: 1px solid #E2E8F0;
+            font-weight: 750;
+            font-size: 0.78rem;
+            padding: 2px 8px;
+            border-radius: 6px;
         }
 
         .restaurant-title {
-            font-size: 1.25rem;
+            font-size: 1.3rem;
             font-weight: 800;
             color: var(--text-heading);
-            letter-spacing: -0.02em;
+            letter-spacing: -0.025em;
             margin: 0;
             line-height: 1.3;
         }
@@ -345,45 +445,47 @@ def inject_custom_css() -> None:
             background: var(--rating-green);
             color: #FFFFFF;
             font-size: 0.82rem;
-            font-weight: 700;
-            padding: 3px 8px;
-            border-radius: 6px;
+            font-weight: 750;
+            padding: 3px 9px;
+            border-radius: 7px;
             display: inline-flex;
             align-items: center;
-            gap: 3px;
+            gap: 4px;
+            box-shadow: 0 1px 3px rgba(5, 150, 105, 0.25);
         }
 
         .card-subtext {
             color: var(--text-muted);
-            font-size: 0.85rem;
-            margin-bottom: 0.75rem;
+            font-size: 0.88rem;
+            font-weight: 500;
+            margin-bottom: 0.85rem;
         }
 
         /* AI Reasoning Box */
         .ai-reasoning-container {
-            background: var(--brand-light);
+            background: linear-gradient(135deg, #FFF1F2 0%, #FFF5F5 100%);
             border: 1px solid #FFE4E6;
-            border-radius: 10px;
-            padding: 0.85rem 1rem;
-            margin-bottom: 0.75rem;
+            border-radius: 12px;
+            padding: 0.95rem 1.15rem;
+            margin-bottom: 0.85rem;
         }
 
         .ai-reasoning-title {
-            font-size: 0.76rem;
+            font-size: 0.74rem;
             font-weight: 800;
             color: var(--brand-primary);
             text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.3rem;
+            letter-spacing: 0.06em;
+            margin-bottom: 0.35rem;
             display: flex;
             align-items: center;
-            gap: 4px;
+            gap: 5px;
         }
 
         .ai-reasoning-body {
-            font-size: 0.9rem;
-            color: #27272A;
-            line-height: 1.5;
+            font-size: 0.91rem;
+            color: #1E293B;
+            line-height: 1.55;
             font-weight: 450;
         }
 
@@ -396,43 +498,44 @@ def inject_custom_css() -> None:
         }
 
         .tag-pill {
-            background: #F4F4F5;
-            color: #3F3F46;
-            border: 1px solid #E4E4E7;
-            font-size: 0.75rem;
+            background: #F8FAFC;
+            color: #334155;
+            border: 1px solid #E2E8F0;
+            font-size: 0.76rem;
             font-weight: 600;
-            padding: 2px 8px;
-            border-radius: 6px;
+            padding: 3px 10px;
+            border-radius: 7px;
         }
 
         /* Empty State */
         .empty-state-wrap {
             background: #FFFFFF;
-            border: 1px dashed #D1D5DB;
-            border-radius: 14px;
-            padding: 2.5rem 1.5rem;
+            border: 1px dashed #CBD5E1;
+            border-radius: 16px;
+            padding: 2.75rem 1.5rem;
             text-align: center;
             margin: 1.5rem 0;
+            box-shadow: var(--shadow-sm);
         }
 
         .empty-state-icon {
-            font-size: 2.2rem;
-            margin-bottom: 0.5rem;
+            font-size: 2.4rem;
+            margin-bottom: 0.6rem;
         }
 
         .empty-state-heading {
-            font-size: 1.15rem;
+            font-size: 1.2rem;
             font-weight: 800;
             color: var(--text-heading);
             margin-bottom: 0.35rem;
         }
 
         .empty-state-sub {
-            font-size: 0.9rem;
+            font-size: 0.92rem;
             color: var(--text-muted);
-            max-width: 460px;
+            max-width: 480px;
             margin: 0 auto;
-            line-height: 1.45;
+            line-height: 1.5;
         }
 
         /* Completely Hide Sidebar and Collapse Toggle */
@@ -445,21 +548,21 @@ def inject_custom_css() -> None:
         /* Unobtrusive Reset Button in Search Panel Header */
         div[data-testid="stButton"] button[key="btn_reset_preferences"],
         button[key="btn_reset_preferences"] {
-            background-color: transparent !important;
+            background-color: #F8FAFC !important;
             color: var(--text-muted) !important;
             border: 1px solid var(--border-subtle) !important;
             border-radius: 8px !important;
             font-size: 0.8rem !important;
-            font-weight: 500 !important;
-            padding: 0.25rem 0.65rem !important;
-            transition: all 0.15s ease !important;
+            font-weight: 600 !important;
+            padding: 0.3rem 0.75rem !important;
+            transition: all 0.18s ease !important;
         }
 
         div[data-testid="stButton"] button[key="btn_reset_preferences"]:hover,
         button[key="btn_reset_preferences"]:hover {
             color: var(--brand-primary) !important;
             border-color: var(--brand-border) !important;
-            background: var(--brand-light) !important;
+            background: #FFF1F2 !important;
         }
         </style>
         """
@@ -505,9 +608,10 @@ def render_hero() -> None:
     st.html(
         """
         <div class="hero-wrap">
-            <div class="hero-title">Find a restaurant you'll actually love.</div>
+            <div class="hero-badge-tag">🎯 PERSONALIZED DINING SEARCH</div>
+            <div class="hero-title">Find a restaurant you'll <span class="hero-title-gradient">actually love.</span></div>
             <div class="hero-desc">
-                Tell us where you're dining, what you're craving, and your budget. We'll find restaurants that match.
+                Tell us where you're dining, what you're craving, and your budget. Our AI finds the best matches and explains why they fit.
             </div>
         </div>
         """
