@@ -45,8 +45,9 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch {
     throw {
-      message:
-        "Cannot reach the backend API. Start Phase 6 with: python -m phase6_backend_api --reload",
+      message: import.meta.env.PROD
+        ? "Cannot reach the backend API. Note: Free Render instances may take ~50 seconds to spin up on cold start. Check your VITE_API_BASE_URL configuration if errors persist."
+        : "Cannot reach the backend API. Start Phase 6 with: python -m phase6_backend_api --reload",
     } satisfies ApiError;
   }
 
