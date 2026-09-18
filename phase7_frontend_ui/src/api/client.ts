@@ -6,13 +6,7 @@ import type {
   ValidationErrorDetail,
 } from "../types/api";
 
-const DEFAULT_BACKEND_URL = "https://zomato-ai-restaurant-recommendation-7zgc.onrender.com";
-
-
-const API_BASE = (
-  import.meta.env.VITE_API_BASE_URL ||
-  (import.meta.env.PROD ? DEFAULT_BACKEND_URL : "")
-).replace(/\/$/, "");
+const API_BASE = (import.meta.env.VITE_API_BASE_URL ?? "").replace(/\/$/, "");
 
 async function parseError(response: Response): Promise<ApiError> {
   try {
@@ -46,9 +40,8 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     });
   } catch {
     throw {
-      message: import.meta.env.PROD
-        ? "Cannot reach the backend API. Note: Free Render instances may take ~50 seconds to spin up on cold start. Check your VITE_API_BASE_URL configuration if errors persist."
-        : "Cannot reach the backend API. Start Phase 6 with: python -m phase6_backend_api --reload",
+      message:
+        "Cannot reach the backend API. Start Phase 6 with: python -m phase6_backend_api --reload",
     } satisfies ApiError;
   }
 

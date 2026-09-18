@@ -36,7 +36,7 @@ User Preferences ➔ Input Validation ➔ Restaurant Filtering ➔ Recommendatio
 - **Backend API:** FastAPI, Uvicorn, Pydantic v2
 - **AI / LLM:** Groq Cloud API (`groq/compound-mini`)
 - **Data Processing:** Pandas, Hugging Face Datasets (`ManikaSaini/zomato-restaurant-recommendation`)
-- **Deployment & DevOps:** Docker, Render, Vercel
+- **Deployment & DevOps:** Docker, Streamlit Community Cloud
 
 ---
 
@@ -87,38 +87,6 @@ streamlit run phase8_deployment/app.py
 ```
 
 Open `http://localhost:8501` in your browser.
-
----
-
-## 🚢 Production Deployment (Render & Vercel)
-
-### 1. Deploy Backend on [Render](https://render.com)
-1. In Render, click **New +** → **Web Service** and connect your GitHub repository.
-2. Configure the web service settings:
-   - **Name**: `zomato-ai-backend` (or your preferred name)
-   - **Root Directory**: *(Leave empty / blank - do NOT set to `phase6_backend_api`)*
-   - **Runtime**: `Python 3`
-   - **Build Command**: `pip install -r requirements.txt`
-   - **Start Command**: `uvicorn phase6_backend_api.app.main:app --host 0.0.0.0 --port $PORT`
-3. Add **Environment Variables**:
-   - `PYTHON_VERSION`: `3.11.9`
-   - `PYTHONPATH`: `.`
-   - `GROQ_API_KEY`: *(your Groq API key)*
-   - `CORS_ORIGINS`: `https://*.vercel.app,http://localhost:5173`
-4. Click **Deploy Web Service**. Once deployed, copy your backend URL (e.g., `https://<service-name>.onrender.com`).
-
-*(Alternatively, deploy automatically via Blueprint using the included `render.yaml` file).*
-
----
-
-### 2. Deploy Frontend on [Vercel](https://vercel.com)
-1. In Vercel, click **Add New...** → **Project** and import your GitHub repository.
-2. In the project configuration:
-   - **Framework Preset**: `Vite`
-   - **Root Directory**: Click **Edit** and choose `phase7_frontend_ui` *(critical step)*
-3. Expand **Environment Variables** and add:
-   - `VITE_API_BASE_URL`: `https://<your-service-name>.onrender.com` *(use your live Render backend URL from Step 1)*
-4. Click **Deploy**. Vercel will build the React SPA and provide your live frontend URL.
 
 ---
 
