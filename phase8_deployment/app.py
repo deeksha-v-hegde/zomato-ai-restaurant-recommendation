@@ -72,9 +72,14 @@ def inject_custom_css() -> None:
             background-color: var(--bg-page);
         }
 
+        header[data-testid="stHeader"] {
+            background-color: transparent !important;
+            z-index: 1 !important;
+        }
+
         .block-container {
             max-width: 900px !important;
-            padding-top: 1.5rem !important;
+            padding-top: 4.5rem !important;
             padding-bottom: 4rem !important;
         }
 
@@ -82,7 +87,7 @@ def inject_custom_css() -> None:
             .block-container {
                 padding-left: 1rem !important;
                 padding-right: 1rem !important;
-                padding-top: 1rem !important;
+                padding-top: 4rem !important;
             }
             .hero-title {
                 font-size: 1.65rem !important;
