@@ -1,0 +1,10 @@
+{
+  "buildCommand": "npm --prefix phase7_frontend_ui install && npm --prefix phase7_frontend_ui run build",
+  "outputDirectory": "phase7_frontend_ui/dist",
+  "rewrites": [
+    {
+      "source": "/(.*)",
+      "destination": "/index.html"
+    }
+  ]
+}

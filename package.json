@@ -1,0 +1,9 @@
+{
+  "name": "zomato-ai-restaurant-recommendation",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "build": "npm --prefix phase7_frontend_ui install && npm --prefix phase7_frontend_ui run build",
+    "dev": "npm --prefix phase7_frontend_ui run dev"
+  }
+}
