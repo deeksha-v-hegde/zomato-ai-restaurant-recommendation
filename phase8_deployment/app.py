@@ -766,44 +766,6 @@ def render_empty_state(case: str, message: str | None = None, hints: list[str] |
     )
 
 
-def render_developer_details(res: RecommendResponse, ctx: AppContext) -> None:
-    """Collapsible expander containing technical pipeline diagnostics."""
-    with st.expander("Developer details", expanded=False):
-        d_col1, d_col2, d_col3 = st.columns(3)
-        with d_col1:
-            st.caption("Catalog Size")
-            st.write(f"**{ctx.status.restaurant_count:,}** restaurants")
-        with d_col2:
-            st.caption("Recommendation Source")
-            st.write(f"**{res.state.title()}** ({'Fallback' if res.used_fallback else 'LLM'})")
-        with d_col3:
-            st.caption("Reasoning Model")
-            st.write(f"`{res.llm_model or 'Deterministic Heuristic'}`")
-
-        st.caption("Catalog Scope:")
-        st.write(
-            f"- City: Bengaluru\n"
-            f"- Records: **{ctx.status.restaurant_count:,}**\n"
-            f"- Neighborhoods: **{len(ctx.catalog.locations)}**\n"
-            f"- Cuisines: **{len(ctx.catalog.cuisines)}**"
-        )
-
-        if res.filter_diagnostics:
-            fd = res.filter_diagnostics
-            st.caption("Candidate Screening Funnel:")
-            st.write(
-                f"- Total records examined: **{fd.total_records:,}**\n"
-                f"- After location filter: **{fd.after_location:,}**\n"
-                f"- After budget tier filter: **{fd.after_budget:,}**\n"
-                f"- After cuisine match: **{fd.after_cuisine:,}**\n"
-                f"- After minimum rating: **{fd.after_rating:,}**\n"
-                f"- Final shortlist to reasoning engine: **{fd.shortlist_count}**"
-            )
-
-        if res.used_fallback and res.fallback_reason:
-            st.info(f"Fallback reason: {res.fallback_reason}")
-
-
 # --- CONTROLLER ---
 def main() -> None:
     inject_custom_css()
@@ -928,9 +890,6 @@ def main() -> None:
             # Recommendation Cards
             for idx, card in enumerate(search_result.recommendations):
                 render_restaurant_card(card, is_top=(idx == 0))
-
-        # Secondary Developer details at bottom
-        render_developer_details(search_result, ctx)
 
 
 if __name__ == "__main__":
