@@ -8,25 +8,58 @@ from phase8_deployment.app import (
 from phase6_backend_api.app.schemas.recommend import RecommendationCard
 
 class TestRestaurantImages(unittest.TestCase):
-    def test_image_resolution_brand(self):
-        url = get_restaurant_image("Meghana Foods", "Koramangala 5th Block", "Biryani, Andhra")
-        self.assertTrue(url.startswith("https://images.unsplash.com/"))
-        self.assertIn("563379091339", url)
+    def test_actual_restaurant_images_for_default_picks(self):
+        """Verify the 5 default recommendations have actual restaurant-specific photos."""
+        # 1. Meghana Foods in Koramangala
+        meghana_img = get_restaurant_image("Meghana Foods", "Koramangala 5th Block", "Biryani, Andhra")
+        self.assertIn("zmtcdn.com", meghana_img)
+        self.assertIn("50691", meghana_img)
 
-    def test_image_resolution_cuisine(self):
-        url1 = get_restaurant_image("Bhartiya Jalpan", "Indiranagar", "North Indian, Street Food")
-        url2 = get_restaurant_image("Kapoor's Cafe", "Koramangala", "North Indian, Punjabi")
-        self.assertTrue(url1.startswith("https://images.unsplash.com/"))
-        self.assertTrue(url2.startswith("https://images.unsplash.com/"))
+        # 2. eat.fit in Koramangala
+        eatfit_img = get_restaurant_image("eat.fit", "Koramangala 5th Block", "Healthy Food, North Indian")
+        self.assertIn("swiggy.com", eatfit_img)
+
+        # 3. BOX8- Desi Meals in Koramangala
+        box8_img = get_restaurant_image("BOX8- Desi Meals", "Koramangala 5th Block", "North Indian, Fast Food")
+        self.assertIn("jdmagicbox.com", box8_img)
+        self.assertIn("box8", box8_img)
+
+        # 4. Desipun in Koramangala
+        desipun_img = get_restaurant_image("Desipun", "Koramangala 5th Block", "North Indian")
+        self.assertIn("jdmagicbox.com", desipun_img)
+        self.assertIn("desipun", desipun_img)
+
+        # 5. Bathinda Junction in Koramangala
+        bathinda_img = get_restaurant_image("Bathinda Junction", "Koramangala 5th Block", "North Indian, Mughlai")
+        self.assertIn("zmtcdn.com", bathinda_img)
+        self.assertIn("59648", bathinda_img)
+
+    def test_image_resolution_brand(self):
+        toit_img = get_restaurant_image("Toit", "Indiranagar", "Brewery, Finger Food")
+        self.assertIn("jdmagicbox.com", toit_img)
+        self.assertIn("toit", toit_img)
+
+        truffles_img = get_restaurant_image("Truffles", "Koramangala 5th Block", "Cafe, Burger")
+        self.assertIn("jdmagicbox.com", truffles_img)
+        self.assertIn("truffles", truffles_img)
+
+        kfc_img = get_restaurant_image("KFC", "Indiranagar", "Fast Food, Burger")
+        self.assertIn("wikimedia.org", kfc_img)
+
+    def test_image_resolution_venue_fallback(self):
+        url1 = get_restaurant_image("Cozy Corner Cafe", "Indiranagar", "Cafe, Bakery")
+        url2 = get_restaurant_image("Royal Punjab Dhaba", "Koramangala", "North Indian, Punjabi")
+        self.assertTrue(url1.startswith("https://"))
+        self.assertTrue(url2.startswith("https://"))
         self.assertNotEqual(url1, url2)
 
     def test_image_resolution_fallback_on_unknown(self):
         url = get_restaurant_image("Unknown XYZ", "Nowhere", "")
-        self.assertTrue(url.startswith("https://images.unsplash.com/"))
+        self.assertTrue(url.startswith("https://"))
 
     def test_image_resolution_handles_exceptions_gracefully(self):
         url = get_restaurant_image(None, None, None)
-        self.assertTrue(url.startswith("https://images.unsplash.com/"))
+        self.assertEqual(url, DEFAULT_FALLBACK_IMAGE)
 
     def test_card_structure(self):
         card = RecommendationCard(
@@ -61,7 +94,7 @@ class TestRestaurantImages(unittest.TestCase):
         # Verify all 5 recommendations have valid image URLs and all fields
         for card in res.recommendations:
             img = get_restaurant_image(card.name, card.location, card.cuisines)
-            self.assertTrue(img.startswith("https://images.unsplash.com/"))
+            self.assertTrue(img.startswith("https://"))
             self.assertTrue(bool(card.name))
             self.assertTrue(bool(card.cuisines))
             self.assertTrue(bool(card.rating))

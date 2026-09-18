@@ -265,7 +265,7 @@ def inject_custom_css() -> None:
 
         .card-img-wrap {
             width: 100%;
-            height: 200px;
+            height: 160px;
             overflow: hidden;
             position: relative;
             background-color: #F4F4F5;
@@ -719,128 +719,119 @@ DEFAULT_FALLBACK_IMAGE = (
     "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80"
 )
 
-# Curated brand photography for popular Bangalore dining icons and chains
+# Curated location-specific restaurant photos (exterior/interior/storefront)
+# Tuples of (restaurant_name_needle, location_needle, image_url)
+_RESTAURANT_LOCATION_IMAGE_MAP: list[tuple[str, str, str]] = [
+    # Koramangala 5th Block top picks
+    (
+        "meghana",
+        "koramangala",
+        "https://b.zmtcdn.com/data/pictures/1/50691/92d9b4053ef0965120828b4fa4eecc3b.jpg",
+    ),
+    (
+        "eat.fit",
+        "koramangala",
+        "https://dineout-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_600,h_468/v1681158827/4ce6bc0591e3ecb2030079c40d634862.jpg",
+    ),
+    (
+        "eat fit",
+        "koramangala",
+        "https://dineout-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_600,h_468/v1681158827/4ce6bc0591e3ecb2030079c40d634862.jpg",
+    ),
+    (
+        "box8",
+        "koramangala",
+        "https://content.jdmagicbox.com/comp/def_content_category/box8/136668172-1545564928962639-5637207615065103483-n-box8-995-p022i.jpg",
+    ),
+    (
+        "desipun",
+        "koramangala",
+        "https://content.jdmagicbox.com/v2/comp/bangalore/m4/080pxx80.xx80.180918120548.y6m4/catalogue/desipun-koramangala-bangalore-north-indian-restaurants-9t5bu665nu.jpg",
+    ),
+    (
+        "bathinda junction",
+        "koramangala",
+        "https://b.zmtcdn.com/data/pictures/chains/8/59648/ad6eb9fe407f0099b94bf3f6904bef76.jpg",
+    ),
+    (
+        "bathinda",
+        "koramangala",
+        "https://b.zmtcdn.com/data/pictures/chains/8/59648/ad6eb9fe407f0099b94bf3f6904bef76.jpg",
+    ),
+    (
+        "toit",
+        "indiranagar",
+        "https://content3.jdmagicbox.com/v2/comp/bangalore/u1/080pxx80.xx80.101215095310.f5u1/catalogue/toit-brew-pub-indira-nagar-2nd-stage-bangalore-microbrewery-pubs-30mc81k.jpg",
+    ),
+    (
+        "truffles",
+        "koramangala",
+        "https://content3.jdmagicbox.com/v2/comp/bangalore/i2/080pxx80.xx80.131226124024.h2i2/catalogue/truffles-koramangala-5th-block-bangalore-restaurants-9enq86.jpg",
+    ),
+    (
+        "vidyarthi bhavan",
+        "basavanagudi",
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/VidyarthiBhavanEntrance.jpg/960px-VidyarthiBhavanEntrance.jpg",
+    ),
+    (
+        "mtr",
+        "lalbagh",
+        "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg/1280px-Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg",
+    ),
+]
+
+# Curated actual restaurant exterior/interior/official brand photography
 _BRAND_IMAGE_MAP: dict[str, str] = {
-    "meghana": "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80",
-    "eat.fit": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
-    "eat fit": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
-    "truffles": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
-    "toit": "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
-    "vidyarthi": "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80",
-    "mtr": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80",
-    "mavalli": "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80",
-    "empire": "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80",
-    "chai point": "https://images.unsplash.com/photo-1544787219-7f47ccb76574?auto=format&fit=crop&w=800&q=80",
-    "third wave": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
-    "glen's": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "glens": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "corner house": "https://images.unsplash.com/photo-1563805042-7684c019e1cb?auto=format&fit=crop&w=800&q=80",
-    "onesta": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
-    "behrouz": "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80",
-    "faasos": "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?auto=format&fit=crop&w=800&q=80",
-    "kfc": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80",
-    "five star chicken": "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80",
-    "mcdonald": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
-    "burger king": "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
-    "domino": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=800&q=80",
+    "meghana": "https://b.zmtcdn.com/data/pictures/1/50691/92d9b4053ef0965120828b4fa4eecc3b.jpg",
+    "eat.fit": "https://dineout-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_600,h_468/v1681158827/4ce6bc0591e3ecb2030079c40d634862.jpg",
+    "eat fit": "https://dineout-media-assets.swiggy.com/swiggy/image/upload/fl_lossy,f_auto,q_auto,w_600,h_468/v1681158827/4ce6bc0591e3ecb2030079c40d634862.jpg",
+    "box8": "https://content.jdmagicbox.com/comp/def_content_category/box8/136668172-1545564928962639-5637207615065103483-n-box8-995-p022i.jpg",
+    "desipun": "https://content.jdmagicbox.com/v2/comp/bangalore/m4/080pxx80.xx80.180918120548.y6m4/catalogue/desipun-koramangala-bangalore-north-indian-restaurants-9t5bu665nu.jpg",
+    "bathinda junction": "https://b.zmtcdn.com/data/pictures/chains/8/59648/ad6eb9fe407f0099b94bf3f6904bef76.jpg",
+    "bathinda": "https://b.zmtcdn.com/data/pictures/chains/8/59648/ad6eb9fe407f0099b94bf3f6904bef76.jpg",
+    "toit": "https://content3.jdmagicbox.com/v2/comp/bangalore/u1/080pxx80.xx80.101215095310.f5u1/catalogue/toit-brew-pub-indira-nagar-2nd-stage-bangalore-microbrewery-pubs-30mc81k.jpg",
+    "truffles": "https://content3.jdmagicbox.com/v2/comp/bangalore/i2/080pxx80.xx80.131226124024.h2i2/catalogue/truffles-koramangala-5th-block-bangalore-restaurants-9enq86.jpg",
+    "vidyarthi": "https://thumb.wikimedia.org/wikipedia/commons/thumb/9/9d/VidyarthiBhavanEntrance.jpg/960px-VidyarthiBhavanEntrance.jpg",
+    "mtr": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg/1280px-Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg",
+    "mavalli": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg/1280px-Mavalli_Tiffin_Room_%286%29%2C_Lalbagh_Road%2C_Bengaluru.jpg",
+    "barbeque nation": "https://thumb.wikimedia.org/wikipedia/commons/thumb/f/f0/Barbeque_Nation_Park_Street.jpg/960px-Barbeque_Nation_Park_Street.jpg",
+    "kfc": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/a8/Kentucky_Fried_Chicken_%28Tallulah%2C_Louisiana%29_01.jpg/960px-Kentucky_Fried_Chicken_%28Tallulah%2C_Louisiana%29_01.jpg",
+    "subway": "https://thumb.wikimedia.org/wikipedia/commons/thumb/7/73/A_Subway_restaurant_in_a_strip_mall_in_Franklin%2C_North_Carolina%2C_United_States.jpg/960px-A_Subway_restaurant_in_a_strip_mall_in_Franklin%2C_North_Carolina%2C_United_States.jpg",
+    "starbucks": "https://thumb.wikimedia.org/wikipedia/commons/thumb/a/ad/Starbuckscenter.jpg/960px-Starbuckscenter.jpg",
+    "mcdonald": "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=800&q=80",
+    "burger king": "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
+    "domino": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
     "pizza hut": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
-    "subway": "https://images.unsplash.com/photo-1509722747041-616f39b57569?auto=format&fit=crop&w=800&q=80",
-    "cafe coffee day": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
-    "ccd": "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
-    "starbucks": "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
-    "baskin robbins": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=800&q=80",
-    "polar bear": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=800&q=80",
-    "a2b": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
-    "adyar ananda": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
-    "kanti sweets": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
-    "barbeque nation": "https://images.unsplash.com/photo-1555939594-58d7cb561ad1?auto=format&fit=crop&w=800&q=80",
-    "california burrito": "https://images.unsplash.com/photo-1565299585323-38d6b0865b47?auto=format&fit=crop&w=800&q=80",
-    "leon grill": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80",
-    "just shawarma": "https://images.unsplash.com/photo-1529006557810-274b9b2fc783?auto=format&fit=crop&w=800&q=80",
-    "social": "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=800&q=80",
-    "smoke house deli": "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80",
-    "mainland china": "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=800&q=80",
-    "beijing bites": "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
-    "chung wah": "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=80",
-    "nagarjuna": "https://images.unsplash.com/photo-1610057099443-fde8c4d50f91?auto=format&fit=crop&w=800&q=80",
-    "sweet truth": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "sweet chariot": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "just bake": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "amma's pastries": "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
-    "drunken monkey": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
-    "lassi shop": "https://images.unsplash.com/photo-1551024709-8f23befc6f87?auto=format&fit=crop&w=800&q=80",
-    "frozen bottle": "https://images.unsplash.com/photo-1497034825429-c343d7c6a68f?auto=format&fit=crop&w=800&q=80",
-    "box8": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
-    "petoo": "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
-    "mojo pizza": "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=800&q=80",
-    "ovenstory": "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
-    "firangi bake": "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80",
-    "the good bowl": "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
-    "rolls on wheels": "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?auto=format&fit=crop&w=800&q=80",
-    "ande ka funda": "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?auto=format&fit=crop&w=800&q=80",
-    "goli vada pav": "https://images.unsplash.com/photo-1601050690597-df0568f70950?auto=format&fit=crop&w=800&q=80",
 }
 
-# Rich category pools for cuisine and keyword matching
-_CUISINE_IMAGE_POOLS: dict[str, list[str]] = {
-    "biryani": [
-        "https://images.unsplash.com/photo-1563379091339-03b21ab4a4f8?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1589302168068-964664d93dc0?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1633945274405-b6c8069047b0?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1631515243349-e0cb75fb8d3a?auto=format&fit=crop&w=800&q=80",
-    ],
-    "north_indian": [
-        "https://images.unsplash.com/photo-1585937421612-70a008356fbe?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1626777552726-4a6b54c97e46?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1565557623262-b51c2513a641?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1599488615731-7e5c2823ff28?auto=format&fit=crop&w=800&q=80",
-    ],
-    "south_indian": [
-        "https://images.unsplash.com/photo-1668236543090-82eba5ee5976?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1589301760014-d929f3979dbc?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1610192244261-3f33de3f55e4?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1630383249896-424e482df921?auto=format&fit=crop&w=800&q=80",
+# Authentic venue interior/dining ambiance pools for appropriate fallback
+# When restaurant-specific photos are not available, use authentic dining spaces (not pretending to be a specific dish)
+_VENUE_IMAGE_POOLS: dict[str, list[str]] = {
+    "indian_dining": [
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1590846406792-0adc7f938f1d?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80",
     ],
     "cafe": [
-        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1495474472287-4d71bcdd2085?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1554118811-1e0d58224f24?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1578985545062-69928b1d9587?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=800&q=80",
     ],
-    "italian": [
-        "https://images.unsplash.com/photo-1513104890138-7c749659a591?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1551183053-bf91a1d81141?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1534308983496-4fabb1a015ee?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1563379926898-05f4575a45d8?auto=format&fit=crop&w=800&q=80",
-    ],
-    "chinese": [
-        "https://images.unsplash.com/photo-1541696432-82c6da8ce7bf?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1569718212165-3a8278d5f624?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1525755662778-989d0524087e?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1579871494447-9811cf80d66c?auto=format&fit=crop&w=800&q=80",
-    ],
-    "fast_food": [
-        "https://images.unsplash.com/photo-1568901346375-23c9450c58cd?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1550547660-d9450f859349?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1626776876729-bab4369a5a5a?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1626082927389-6cd097cdc6ec?auto=format&fit=crop&w=800&q=80",
+    "bistro": [
+        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1537047902294-62a40c20a6ae?auto=format&fit=crop&w=800&q=80",
     ],
     "bar": [
         "https://images.unsplash.com/photo-1514933651103-005eec06c04b?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1572116469696-31de0f17cc34?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1574096079513-d8259312b785?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1510812431401-41d2bd2722f3?auto=format&fit=crop&w=800&q=80",
     ],
-    "seafood": [
-        "https://images.unsplash.com/photo-1534422298391-e4f8c172dddb?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1579631542720-3a87824fff86?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1519708227418-c8fd9a32b7a2?auto=format&fit=crop&w=800&q=80",
+    "asian_dining": [
+        "https://images.unsplash.com/photo-1552566626-52f8b828add9?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
     ],
     "dining": [
-        "https://images.unsplash.com/photo-1540420773420-3366772f4999?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=800&q=80",
-        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80",
         "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1550966871-3ed3cdb5ed0c?auto=format&fit=crop&w=800&q=80",
+        "https://images.unsplash.com/photo-1559339352-11d035aa65de?auto=format&fit=crop&w=800&q=80",
     ],
 }
 
@@ -853,12 +844,14 @@ def _deterministic_pick(pool: list[str], seed_str: str) -> str:
     return pool[h % len(pool)]
 
 
-def get_restaurant_image(name: str, location: str, cuisines: str) -> str:
-    """Resolve a relevant, high-resolution image for a restaurant.
+def get_restaurant_image(name: str | None, location: str | None, cuisines: str | None) -> str:
+    """Resolve a restaurant image preferring actual exterior/interior restaurant photos.
 
-    Uses brand matching first, followed by cuisine and restaurant keyword
-    pools with deterministic name+location hashing for visual variety.
-    Gracefully falls back to a universal ambient dining image on any failure.
+    1. Checks (restaurant name + location) for specific restaurant outlet/branch photos.
+    2. Checks (restaurant name) for official brand/chain exterior/interior photos.
+    3. If not found, falls back gracefully to a curated authentic restaurant dining/venue ambiance photo
+       using deterministic hashing on (name + location) for visual variety.
+    4. Never crashes; falls back safely on any error or missing input.
     """
     try:
         norm_name = (name or "").lower().strip()
@@ -866,34 +859,31 @@ def get_restaurant_image(name: str, location: str, cuisines: str) -> str:
         norm_cui = (cuisines or "").lower().strip()
         seed = f"{norm_name}:{norm_loc}"
 
-        # 1. Direct Brand Match
+        # 1. Location-Specific Restaurant Outlet Match (Name + Location)
+        for brand_k, loc_k, img_url in _RESTAURANT_LOCATION_IMAGE_MAP:
+            if brand_k in norm_name and loc_k in norm_loc:
+                return img_url
+
+        # 2. Restaurant Brand / Venue Match
         for brand_key, img_url in _BRAND_IMAGE_MAP.items():
             if brand_key in norm_name:
                 return img_url
 
-        # 2. Cuisine / Keyword Category Match
+        # 3. Appropriate Venue/Ambiance Fallback by Cuisine & Restaurant Type
         combined_text = f"{norm_name} {norm_cui}"
-        if any(w in combined_text for w in ["biryani", "hyderabadi", "dum biryani", "awadhi"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["biryani"], seed)
-        if any(w in combined_text for w in ["dosa", "idli", "south indian", "udupi", "chettinad", "kerala", "tiffin"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["south_indian"], seed)
-        if any(w in combined_text for w in ["north indian", "mughlai", "tandoori", "punjabi", "curry", "roti", "paneer"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["north_indian"], seed)
-        if any(w in combined_text for w in ["pizza", "pasta", "italian"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["italian"], seed)
-        if any(w in combined_text for w in ["chinese", "asian", "thai", "dim sum", "momo", "noodle", "japanese", "sushi"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["chinese"], seed)
-        if any(w in combined_text for w in ["cafe", "coffee", "bakery", "dessert", "cake", "pastry", "tea", "waffle", "ice cream"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["cafe"], seed)
-        if any(w in combined_text for w in ["burger", "fast food", "roll", "wrap", "sandwich", "shawarma", "snack"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["fast_food"], seed)
-        if any(w in combined_text for w in ["brewery", "pub", "bar", "cocktail", "beer", "lounge", "rooftop"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["bar"], seed)
-        if any(w in combined_text for w in ["seafood", "fish", "prawn", "crab", "coastal", "mangalorean"]):
-            return _deterministic_pick(_CUISINE_IMAGE_POOLS["seafood"], seed)
+        if any(w in combined_text for w in ["brewery", "pub", "bar", "cocktail", "beer", "lounge"]):
+            return _deterministic_pick(_VENUE_IMAGE_POOLS["bar"], seed)
+        if any(w in combined_text for w in ["cafe", "coffee", "bakery", "dessert", "tea"]):
+            return _deterministic_pick(_VENUE_IMAGE_POOLS["cafe"], seed)
+        if any(w in combined_text for w in ["biryani", "north indian", "south indian", "mughlai", "tandoori", "punjabi", "dosa", "thali"]):
+            return _deterministic_pick(_VENUE_IMAGE_POOLS["indian_dining"], seed)
+        if any(w in combined_text for w in ["pizza", "pasta", "italian", "continental", "european"]):
+            return _deterministic_pick(_VENUE_IMAGE_POOLS["bistro"], seed)
+        if any(w in combined_text for w in ["chinese", "asian", "thai", "japanese", "sushi"]):
+            return _deterministic_pick(_VENUE_IMAGE_POOLS["asian_dining"], seed)
 
-        # 3. Dining pool fallback with deterministic pick
-        return _deterministic_pick(_CUISINE_IMAGE_POOLS["dining"], seed)
+        # 4. Universal Dining Room Ambiance Fallback
+        return _deterministic_pick(_VENUE_IMAGE_POOLS["dining"], seed)
     except Exception:
         return DEFAULT_FALLBACK_IMAGE
 
