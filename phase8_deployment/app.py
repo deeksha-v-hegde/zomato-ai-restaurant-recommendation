@@ -35,7 +35,7 @@ st.set_page_config(
     page_title=f"{APP_TITLE} · AI Restaurant Finder",
     page_icon=APP_ICON,
     layout="centered",
-    initial_sidebar_state="expanded",
+    initial_sidebar_state="collapsed",
 )
 
 
@@ -73,9 +73,20 @@ def inject_custom_css() -> None:
         }
 
         .block-container {
-            max-width: 860px !important;
+            max-width: 900px !important;
             padding-top: 1.5rem !important;
             padding-bottom: 4rem !important;
+        }
+
+        @media (max-width: 768px) {
+            .block-container {
+                padding-left: 1rem !important;
+                padding-right: 1rem !important;
+                padding-top: 1rem !important;
+            }
+            .hero-title {
+                font-size: 1.65rem !important;
+            }
         }
 
         /* Top Brand Header */
@@ -419,41 +430,31 @@ def inject_custom_css() -> None:
             line-height: 1.45;
         }
 
-        /* Sidebar Styling */
+        /* Completely Hide Sidebar and Collapse Toggle */
+        [data-testid="stSidebar"],
+        [data-testid="stSidebarCollapsedControl"],
         section[data-testid="stSidebar"] {
-            background-color: #FFFFFF !important;
-            border-right: 1px solid var(--border-subtle) !important;
+            display: none !important;
         }
 
-        .sidebar-brand-title {
-            font-size: 1.15rem;
-            font-weight: 800;
-            color: var(--text-heading);
+        /* Unobtrusive Reset Button in Search Panel Header */
+        div[data-testid="stButton"] button[key="btn_reset_preferences"],
+        button[key="btn_reset_preferences"] {
+            background-color: transparent !important;
+            color: var(--text-muted) !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 8px !important;
+            font-size: 0.8rem !important;
+            font-weight: 500 !important;
+            padding: 0.25rem 0.65rem !important;
+            transition: all 0.15s ease !important;
         }
 
-        .sidebar-brand-sub {
-            font-size: 0.78rem;
-            color: var(--text-muted);
-            margin-bottom: 1rem;
-            padding-bottom: 0.75rem;
-            border-bottom: 1px solid var(--border-subtle);
-        }
-
-        .step-item {
-            display: flex;
-            align-items: flex-start;
-            gap: 8px;
-            margin-bottom: 0.6rem;
-            font-size: 0.85rem;
-            color: var(--text-body);
-            line-height: 1.4;
-        }
-
-        .step-num {
-            font-weight: 800;
-            color: var(--brand-primary);
-            font-size: 0.8rem;
-            min-width: 20px;
+        div[data-testid="stButton"] button[key="btn_reset_preferences"]:hover,
+        button[key="btn_reset_preferences"]:hover {
+            color: var(--brand-primary) !important;
+            border-color: var(--brand-border) !important;
+            background: var(--brand-light) !important;
         }
         </style>
         """
@@ -526,30 +527,6 @@ def set_craving(text: str) -> None:
     st.session_state["pref_additional"] = text
 
 
-def render_sidebar(ctx: AppContext) -> None:
-    """Render compact, product-level sidebar."""
-    with st.sidebar:
-        st.html(
-            """
-            <div class="sidebar-brand-title">🍽️ AI Restaurant Finder</div>
-            <div class="sidebar-brand-sub">Personalized dining recommendations</div>
-            """
-        )
-
-        default_location = (
-            "Koramangala 5th Block"
-            if "Koramangala 5th Block" in ctx.catalog.locations
-            else ctx.catalog.locations[0]
-        )
-        st.button(
-            "🔄 Reset Search Preferences",
-            use_container_width=True,
-            on_click=reset_search_preferences,
-            args=(default_location,),
-            key="btn_reset_preferences",
-        )
-
-
 def render_quick_inspiration() -> None:
     """Render compact pill/chip buttons for one-click cravings."""
     st.html("<div class='craving-title'>✨ TRY A CRAVING</div>")
@@ -603,9 +580,27 @@ def render_search_panel(ctx: AppContext) -> bool:
         "Any Rating",
     ]
 
+    default_location = (
+        "Koramangala 5th Block"
+        if "Koramangala 5th Block" in ctx.catalog.locations
+        else ctx.catalog.locations[0]
+    )
+
     with st.container(border=True):
-        # Section 1: Where Are You Dining?
-        st.html("<div class='section-header-tag'>📍 WHERE ARE YOU DINING?</div>")
+        # Section 1 Header + Unobtrusive Reset Button in Top-Right
+        hdr_col1, hdr_col2 = st.columns([3, 1.3])
+        with hdr_col1:
+            st.html("<div class='section-header-tag' style='margin-top: 6px;'>📍 WHERE ARE YOU DINING?</div>")
+        with hdr_col2:
+            st.button(
+                "🔄 Reset Preferences",
+                use_container_width=True,
+                on_click=reset_search_preferences,
+                args=(default_location,),
+                key="btn_reset_preferences",
+                help="Reset all search fields to default values",
+            )
+
         r1_col1, r1_col2 = st.columns(2)
         with r1_col1:
             st.selectbox(
@@ -1009,9 +1004,6 @@ def main() -> None:
     st.session_state.setdefault("pref_cuisine", "North Indian")
     st.session_state.setdefault("pref_min_rating", "4.0+ Stars")
     st.session_state.setdefault("pref_additional", "")
-
-    # Render Sidebar
-    render_sidebar(ctx)
 
     # Render Header & Hero
     render_header()
