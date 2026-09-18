@@ -549,11 +549,6 @@ def render_sidebar(ctx: AppContext) -> None:
             key="btn_reset_preferences",
         )
 
-        with st.expander("ℹ️ About this project", expanded=False):
-            st.caption(
-                "Discover curated restaurants in Bengaluru tailored to your dining vibe, cuisine cravings, budget, and ratings powered by AI."
-            )
-
 
 def render_quick_inspiration() -> None:
     """Render compact pill/chip buttons for one-click cravings."""
