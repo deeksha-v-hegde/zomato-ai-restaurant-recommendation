@@ -479,6 +479,24 @@ def render_hero() -> None:
     )
 
 
+def reset_search_preferences(default_location: str) -> None:
+    """Reset all search preference widgets and results in session state."""
+    st.session_state["pref_location"] = default_location
+    st.session_state["pref_budget"] = "Medium (₹500 - ₹1,500)"
+    st.session_state["pref_cuisine"] = "North Indian"
+    st.session_state["pref_min_rating"] = "4.0+ Stars"
+    st.session_state["pref_additional"] = ""
+    st.session_state["search_result"] = None
+    st.session_state["search_error"] = None
+    st.session_state["last_search_summary"] = None
+    st.session_state["last_exception"] = None
+
+
+def set_craving(text: str) -> None:
+    """Set the additional preferences craving text."""
+    st.session_state["pref_additional"] = text
+
+
 def render_sidebar(ctx: AppContext) -> None:
     """Render compact, product-level sidebar."""
     with st.sidebar:
@@ -518,17 +536,19 @@ def render_sidebar(ctx: AppContext) -> None:
                 f"- **Cuisines**: {len(ctx.catalog.cuisines)}"
             )
 
+        default_location = (
+            "Koramangala 5th Block"
+            if "Koramangala 5th Block" in ctx.catalog.locations
+            else ctx.catalog.locations[0]
+        )
         st.markdown("---")
-        if st.button("🔄 Reset Search Preferences", use_container_width=True):
-            st.session_state.pref_location = "Koramangala 5th Block" if "Koramangala 5th Block" in ctx.catalog.locations else ctx.catalog.locations[0]
-            st.session_state.pref_budget = "Medium (₹500 - ₹1,500)"
-            st.session_state.pref_cuisine = "North Indian"
-            st.session_state.pref_min_rating = "4.0+ Stars"
-            st.session_state.pref_additional = ""
-            st.session_state.pop("search_result", None)
-            st.session_state.pop("search_error", None)
-            st.session_state.pop("last_search_summary", None)
-            st.rerun()
+        st.button(
+            "🔄 Reset Search Preferences",
+            use_container_width=True,
+            on_click=reset_search_preferences,
+            args=(default_location,),
+            key="btn_reset_preferences",
+        )
 
 
 def render_quick_inspiration() -> None:
@@ -536,18 +556,34 @@ def render_quick_inspiration() -> None:
     st.html("<div class='craving-title'>✨ TRY A CRAVING</div>")
     q_col1, q_col2, q_col3, q_col4 = st.columns(4)
 
-    if q_col1.button("🌃 Rooftop & Drinks", use_container_width=True):
-        st.session_state.pref_additional = "rooftop terrace with city views and craft cocktails"
-        st.rerun()
-    if q_col2.button("🍗 Butter Chicken", use_container_width=True):
-        st.session_state.pref_additional = "authentic rich butter chicken, garlic naan and family seating"
-        st.rerun()
-    if q_col3.button("☕ Cozy Cafe", use_container_width=True):
-        st.session_state.pref_additional = "cozy quiet cafe with artisan coffee and gourmet pasta"
-        st.rerun()
-    if q_col4.button("🥘 Ghee Roast Dosa", use_container_width=True):
-        st.session_state.pref_additional = "crispy ghee roast masala dosa with fresh coconut chutney"
-        st.rerun()
+    q_col1.button(
+        "🌃 Rooftop & Drinks",
+        use_container_width=True,
+        on_click=set_craving,
+        args=("rooftop terrace with city views and craft cocktails",),
+        key="chip_rooftop",
+    )
+    q_col2.button(
+        "🍗 Butter Chicken",
+        use_container_width=True,
+        on_click=set_craving,
+        args=("authentic rich butter chicken, garlic naan and family seating",),
+        key="chip_butter_chicken",
+    )
+    q_col3.button(
+        "☕ Cozy Cafe",
+        use_container_width=True,
+        on_click=set_craving,
+        args=("cozy quiet cafe with artisan coffee and gourmet pasta",),
+        key="chip_cozy_cafe",
+    )
+    q_col4.button(
+        "🥘 Ghee Roast Dosa",
+        use_container_width=True,
+        on_click=set_craving,
+        args=("crispy ghee roast masala dosa with fresh coconut chutney",),
+        key="chip_ghee_roast_dosa",
+    )
 
 
 def render_search_panel(ctx: AppContext) -> bool:
@@ -573,20 +609,18 @@ def render_search_panel(ctx: AppContext) -> bool:
         st.html("<div class='section-header-tag'>📍 WHERE & HOW MUCH</div>")
         r1_col1, r1_col2 = st.columns(2)
         with r1_col1:
-            sel_loc = st.selectbox(
+            st.selectbox(
                 "Location",
                 options=loc_options,
-                index=_index_or_zero(loc_options, st.session_state.pref_location),
+                key="pref_location",
             )
-            st.session_state.pref_location = sel_loc
 
         with r1_col2:
-            sel_bud = st.selectbox(
+            st.selectbox(
                 "Budget",
                 options=budget_options,
-                index=_index_or_zero(budget_options, st.session_state.pref_budget),
+                key="pref_budget",
             )
-            st.session_state.pref_budget = sel_bud
 
         st.html("<div style='height: 4px;'></div>")
 
@@ -594,32 +628,29 @@ def render_search_panel(ctx: AppContext) -> bool:
         st.html("<div class='section-header-tag'>🍴 FLAVORS & STANDARDS</div>")
         r2_col1, r2_col2 = st.columns(2)
         with r2_col1:
-            sel_cui = st.selectbox(
+            st.selectbox(
                 "Cuisine",
                 options=cui_options,
-                index=_index_or_zero(cui_options, st.session_state.pref_cuisine),
+                key="pref_cuisine",
             )
-            st.session_state.pref_cuisine = sel_cui
 
         with r2_col2:
-            sel_rat = st.selectbox(
+            st.selectbox(
                 "Minimum Rating",
                 options=rating_options,
-                index=_index_or_zero(rating_options, st.session_state.pref_min_rating),
+                key="pref_min_rating",
             )
-            st.session_state.pref_min_rating = sel_rat
 
         st.html("<div style='height: 4px;'></div>")
 
         # Section 3: Specific Vibe & Cravings
         st.html("<div class='section-header-tag'>✨ SPECIFIC VIBE & CRAVINGS</div>")
-        pref_val = st.text_input(
+        st.text_input(
             "Additional Preferences",
-            value=st.session_state.pref_additional,
             placeholder="e.g., quiet romantic dinner, authentic woodfired pizza, outdoor garden seating...",
             label_visibility="collapsed",
+            key="pref_additional",
         )
-        st.session_state.pref_additional = pref_val
 
         # Quick inspiration chips
         render_quick_inspiration()
