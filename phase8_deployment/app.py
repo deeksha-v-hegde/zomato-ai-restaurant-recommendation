@@ -643,6 +643,13 @@ def render_search_panel(ctx: AppContext) -> bool:
     return submitted
 
 
+def _format_cost(raw_cost: str) -> str:
+    """Format cost cleanly without duplicate currency symbols or 'for two' text."""
+    clean = raw_cost.replace("for two", "").replace("for 2", "").strip()
+    clean = clean.replace("₹", "").strip()
+    return f"₹{clean} for two" if clean else "N/A"
+
+
 def render_search_summary(
     location: str,
     budget_label: str,
@@ -665,8 +672,8 @@ def render_search_summary(
 
     st.html(
         f"""
-        <div style="margin-top: 1rem;">
-            <div class="picks-header-title">✨ YOUR AI PICKS</div>
+        <div class="picks-header-container" style="margin-top: 1rem; margin-bottom: 0.5rem;">
+            <div class="picks-header-title">✨ YOUR AI RESTAURANT PICKS</div>
             <div class="picks-header-sub">{count} restaurant{"s" if count != 1 else ""} matched your preferences</div>
             <div class="summary-pill-container">
                 <span class="summary-badge">📍 {html.escape(location)}</span>
@@ -691,7 +698,7 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
 
     # Ranking label
     if rank == 1:
-        rank_label = '<span class="rank-label-top">#1 Top Match</span>'
+        rank_label = '<span class="rank-label-top">#1 Top Pick</span>'
         card_class = "recommendation-card top-tier-card"
     else:
         rank_label = f'<span class="rank-label-normal">#{rank}</span>'
@@ -708,6 +715,7 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
 
     # First cuisine for primary tag
     first_cuisine = cui.split(",")[0].strip() if cui else "Dining"
+    formatted_cost = _format_cost(cost)
 
     card_html = f"""
     <div class="{card_class}">
@@ -722,7 +730,7 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
         </div>
 
         <div class="card-subtext">
-            {html.escape(cui)} • ₹{html.escape(cost)} for two
+            {html.escape(cui)} • {html.escape(formatted_cost)}
         </div>
 
         <div class="ai-reasoning-container">
@@ -876,16 +884,21 @@ def main() -> None:
                 hints=search_result.refine_hints,
             )
         else:
-            # Summary above results
-            if summary_meta:
-                render_search_summary(
-                    location=summary_meta["location"],
-                    budget_label=summary_meta["budget"],
-                    cuisine=summary_meta["cuisine"],
-                    rating_label=summary_meta["rating"],
-                    count=len(search_result.recommendations),
-                    used_fallback=search_result.used_fallback or (search_result.state == "fallback"),
-                )
+            # Summary header above results
+            loc = (summary_meta or {}).get("location") or st.session_state.get("pref_location") or "Bengaluru"
+            bud = (summary_meta or {}).get("budget") or st.session_state.get("pref_budget") or "Medium"
+            cui = (summary_meta or {}).get("cuisine") or st.session_state.get("pref_cuisine") or "All Cuisines"
+            rat = (summary_meta or {}).get("rating") or st.session_state.get("pref_min_rating") or "4.0+"
+            used_fb = search_result.used_fallback or (search_result.state == "fallback")
+
+            render_search_summary(
+                location=loc,
+                budget_label=bud,
+                cuisine=cui,
+                rating_label=rat,
+                count=len(search_result.recommendations),
+                used_fallback=used_fb,
+            )
 
             # Recommendation Cards
             for idx, card in enumerate(search_result.recommendations):
