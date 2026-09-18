@@ -1,7 +1,7 @@
 """Phase 8: Streamlit Deployment Application.
 
-A modern, consumer-grade AI-powered restaurant discovery interface.
-Connects in-process to the recommendation service (Phases 1 → 2 → 3 → 4 → 6).
+A modern, consumer-grade AI Restaurant Finder frontend.
+Preserves all existing backend logic, pipelines, dataset handling, and Groq integration.
 """
 
 from __future__ import annotations
@@ -34,13 +34,13 @@ st.set_page_config(
     page_title=f"{APP_TITLE} · AI Restaurant Finder",
     page_icon=APP_ICON,
     layout="centered",
-    initial_sidebar_state="collapsed",
+    initial_sidebar_state="expanded",
 )
 
 
-# --- CUSTOM DESIGN SYSTEM & CSS INJECTION ---
+# --- CENTRALIZED STYLING & DESIGN SYSTEM ---
 def inject_custom_css() -> None:
-    """Inject polished, modern SaaS styling for the restaurant discovery UI."""
+    """Inject modern, restrained CSS for an AI consumer food discovery product."""
     st.html(
         """
         <style>
@@ -49,8 +49,8 @@ def inject_custom_css() -> None:
         :root {
             --brand-primary: #E23744;
             --brand-primary-hover: #CB202D;
-            --brand-primary-light: #FFF5F5;
-            --brand-primary-border: #FECDD3;
+            --brand-light: #FFF5F5;
+            --brand-border: #FECDD3;
             --bg-page: #FAFAF9;
             --surface-card: #FFFFFF;
             --text-heading: #18181B;
@@ -59,13 +59,11 @@ def inject_custom_css() -> None:
             --border-subtle: #E4E4E7;
             --rating-green: #15803D;
             --rating-bg: #DCFCE7;
-            --gold-rank: #D97706;
-            --gold-bg: #FEF3C7;
         }
 
-        /* Global Reset & Typography */
+        /* Base Typography */
         html, body, [class*="css"] {
-            font-family: 'Inter', ui-sans-serif, system-ui, -apple-system, sans-serif !important;
+            font-family: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif !important;
             color: var(--text-body);
         }
 
@@ -74,180 +72,163 @@ def inject_custom_css() -> None:
         }
 
         .block-container {
-            max-width: 920px !important;
+            max-width: 860px !important;
             padding-top: 1.5rem !important;
             padding-bottom: 4rem !important;
         }
 
-        /* Header Branding */
-        .brand-bar {
+        /* Top Brand Header */
+        .brand-header-row {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.5rem 0 1.25rem 0;
+            padding: 0.25rem 0 1rem 0;
             border-bottom: 1px solid var(--border-subtle);
-            margin-bottom: 1.5rem;
+            margin-bottom: 1.25rem;
         }
 
-        .brand-title-wrap {
+        .brand-logo-area {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
         }
 
-        .brand-icon-box {
-            background: linear-gradient(135deg, #FFF1F2 0%, #FFE4E6 100%);
-            border: 1px solid var(--brand-primary-border);
-            width: 44px;
-            height: 44px;
-            border-radius: 12px;
+        .brand-logo-icon {
+            font-size: 1.5rem;
+            background: #FFF1F2;
+            border: 1px solid var(--brand-border);
+            width: 40px;
+            height: 40px;
+            border-radius: 10px;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 1.4rem;
-            box-shadow: 0 2px 8px rgba(226, 55, 68, 0.12);
         }
 
-        .brand-name {
-            font-size: 1.35rem;
+        .brand-product-title {
+            font-size: 1.25rem;
             font-weight: 800;
             color: var(--text-heading);
             letter-spacing: -0.02em;
             line-height: 1.2;
         }
 
-        .brand-tagline {
-            font-size: 0.82rem;
+        .brand-product-sub {
+            font-size: 0.8rem;
             color: var(--text-muted);
             font-weight: 500;
         }
 
-        .ai-status-pill {
+        .ai-badge-pill {
             background: #FFF1F2;
             color: var(--brand-primary);
-            border: 1px solid var(--brand-primary-border);
-            font-size: 0.75rem;
+            border: 1px solid var(--brand-border);
+            font-size: 0.72rem;
             font-weight: 700;
-            padding: 4px 12px;
+            padding: 3px 10px;
             border-radius: 20px;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            letter-spacing: 0.02em;
+            letter-spacing: 0.03em;
         }
 
-        /* Hero Section */
-        .hero-container {
-            text-align: center;
-            padding: 1.25rem 0 1.75rem 0;
+        /* Compact Hero Section */
+        .hero-wrap {
+            text-align: left;
+            margin-bottom: 1.25rem;
         }
 
-        .hero-headline {
-            font-size: 2.25rem;
+        .hero-title {
+            font-size: 2.1rem;
             font-weight: 800;
             color: var(--text-heading);
             letter-spacing: -0.03em;
-            line-height: 1.2;
-            margin-bottom: 0.6rem;
+            line-height: 1.25;
+            margin-bottom: 0.35rem;
         }
 
-        .hero-subtitle {
-            font-size: 1rem;
+        .hero-desc {
+            font-size: 0.95rem;
             color: var(--text-muted);
             line-height: 1.5;
-            max-width: 620px;
-            margin: 0 auto;
-            font-weight: 400;
+            max-width: 680px;
         }
 
-        /* Search & Preference Card */
+        /* Search Panel Container */
         div[data-testid="stVerticalBlockBorderWrapper"] {
             background: var(--surface-card) !important;
-            border: 1px solid #E2E8F0 !important;
-            border-radius: 18px !important;
-            padding: 1.5rem 1.75rem !important;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.04) !important;
-            margin-bottom: 2rem !important;
+            border: 1px solid var(--border-subtle) !important;
+            border-radius: 16px !important;
+            padding: 1.25rem 1.5rem !important;
+            box-shadow: 0 4px 18px rgba(0, 0, 0, 0.03) !important;
+            margin-bottom: 1.5rem !important;
         }
 
-        .form-section-title {
-            font-size: 0.8rem;
+        .section-header-tag {
+            font-size: 0.76rem;
             font-weight: 800;
             color: #4B5563;
             letter-spacing: 0.06em;
             text-transform: uppercase;
-            margin-bottom: 0.6rem;
+            margin-bottom: 0.45rem;
             display: flex;
             align-items: center;
             gap: 6px;
         }
 
-        /* Quick Inspiration Chips */
-        .quick-chips-row {
-            display: flex;
-            gap: 8px;
-            flex-wrap: wrap;
-            margin: 0.6rem 0 1.2rem 0;
-        }
-
-        .chip-label {
-            font-size: 0.75rem;
-            font-weight: 700;
-            color: var(--text-muted);
-            text-transform: uppercase;
+        .craving-title {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--brand-primary);
             letter-spacing: 0.05em;
-            margin-top: 0.4rem;
+            text-transform: uppercase;
+            margin: 0.6rem 0 0.35rem 0;
         }
 
-        /* Primary Button Accent */
+        /* Full-Width Primary CTA */
         div.stButton > button[kind="primary"] {
             background: linear-gradient(135deg, #E23744 0%, #EA580C 100%) !important;
             color: #FFFFFF !important;
             border: none !important;
             font-weight: 700 !important;
-            font-size: 1.05rem !important;
+            font-size: 1rem !important;
             border-radius: 12px !important;
             padding: 0.65rem 1.5rem !important;
-            box-shadow: 0 4px 14px rgba(226, 55, 68, 0.28) !important;
+            box-shadow: 0 4px 14px rgba(226, 55, 68, 0.25) !important;
             transition: all 0.2s ease !important;
+            margin-top: 0.4rem !important;
         }
 
         div.stButton > button[kind="primary"]:hover {
-            box-shadow: 0 6px 20px rgba(226, 55, 68, 0.38) !important;
+            box-shadow: 0 6px 20px rgba(226, 55, 68, 0.35) !important;
             transform: translateY(-1px) !important;
         }
 
-        /* Search Summary Banner */
-        .search-summary-card {
-            background: #FFFFFF;
-            border: 1px solid #E5E7EB;
-            border-radius: 14px;
-            padding: 1rem 1.25rem;
-            margin-bottom: 1.75rem;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+        /* Search Summary Header */
+        .picks-header-title {
+            font-size: 1.3rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            letter-spacing: -0.02em;
+            margin-bottom: 0.15rem;
         }
 
-        .search-summary-header {
-            font-size: 0.8rem;
-            font-weight: 700;
+        .picks-header-sub {
+            font-size: 0.88rem;
             color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.5rem;
+            margin-bottom: 0.75rem;
         }
 
-        .search-criteria-badges {
+        .summary-pill-container {
             display: flex;
             flex-wrap: wrap;
             gap: 8px;
             align-items: center;
-            margin-bottom: 0.4rem;
+            margin-bottom: 1.25rem;
         }
 
-        .criteria-pill {
-            background: #F4F4F5;
+        .summary-badge {
+            background: #FFFFFF;
+            border: 1px solid var(--border-subtle);
             color: #27272A;
-            border: 1px solid #E4E4E7;
             font-size: 0.82rem;
             font-weight: 600;
             padding: 4px 10px;
@@ -255,77 +236,71 @@ def inject_custom_css() -> None:
             display: inline-flex;
             align-items: center;
             gap: 5px;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
         }
 
-        .summary-count-line {
-            font-size: 0.95rem;
-            font-weight: 700;
-            color: var(--brand-primary);
-            margin-top: 0.4rem;
-        }
-
-        /* Restaurant Card (Clean, Modern, No Fake Images) */
-        .restaurant-card {
+        /* Restaurant Cards */
+        .recommendation-card {
             background: var(--surface-card);
             border: 1px solid var(--border-subtle);
-            border-radius: 16px;
-            padding: 1.5rem;
-            margin-bottom: 1.25rem;
-            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.03);
+            border-radius: 14px;
+            padding: 1.25rem 1.4rem;
+            margin-bottom: 1.1rem;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
             transition: transform 0.15s ease, box-shadow 0.15s ease;
         }
 
-        .restaurant-card:hover {
-            box-shadow: 0 6px 20px rgba(0, 0, 0, 0.06);
-            transform: translateY(-2px);
+        .recommendation-card:hover {
+            box-shadow: 0 6px 18px rgba(0, 0, 0, 0.05);
+            transform: translateY(-1px);
         }
 
-        .top-match-card {
-            border: 1.5px solid var(--brand-primary-border);
-            box-shadow: 0 6px 24px rgba(226, 55, 68, 0.08);
+        .top-tier-card {
+            border: 1.5px solid var(--brand-border);
+            box-shadow: 0 4px 18px rgba(226, 55, 68, 0.06);
             background: linear-gradient(180deg, #FFFDFD 0%, #FFFFFF 100%);
         }
 
-        .card-header-row {
+        .card-top-bar {
             display: flex;
             justify-content: space-between;
-            align-items: flex-start;
-            margin-bottom: 0.5rem;
+            align-items: center;
+            margin-bottom: 0.35rem;
         }
 
-        .rank-badge-top {
-            background: #FFF1F2;
+        .card-rank-title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .rank-label-top {
             color: var(--brand-primary);
-            border: 1px solid var(--brand-primary-border);
-            font-size: 0.76rem;
             font-weight: 800;
-            padding: 3px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.04em;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            font-size: 0.88rem;
+            letter-spacing: -0.01em;
         }
 
-        .rank-badge-standard {
-            background: #F4F4F5;
-            color: #52525B;
-            border: 1px solid var(--border-subtle);
-            font-size: 0.76rem;
+        .rank-label-normal {
+            color: var(--text-muted);
             font-weight: 700;
-            padding: 3px 10px;
-            border-radius: 20px;
-            letter-spacing: 0.04em;
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
+            font-size: 0.88rem;
         }
 
-        .rating-badge-pill {
+        .restaurant-title {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--text-heading);
+            letter-spacing: -0.02em;
+            margin: 0;
+            line-height: 1.3;
+        }
+
+        .rating-badge {
             background: var(--rating-green);
             color: #FFFFFF;
-            font-size: 0.85rem;
-            font-weight: 800;
+            font-size: 0.82rem;
+            font-weight: 700;
             padding: 3px 8px;
             border-radius: 6px;
             display: inline-flex;
@@ -333,112 +308,131 @@ def inject_custom_css() -> None:
             gap: 3px;
         }
 
-        .restaurant-name {
-            font-size: 1.4rem;
-            font-weight: 800;
-            color: var(--text-heading);
-            margin: 0.25rem 0 0.5rem 0;
-            letter-spacing: -0.02em;
+        .card-subtext {
+            color: var(--text-muted);
+            font-size: 0.85rem;
+            margin-bottom: 0.75rem;
         }
 
-        .card-meta-row {
+        /* AI Reasoning Box */
+        .ai-reasoning-container {
+            background: var(--brand-light);
+            border: 1px solid #FFE4E6;
+            border-radius: 10px;
+            padding: 0.85rem 1rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .ai-reasoning-title {
+            font-size: 0.76rem;
+            font-weight: 800;
+            color: var(--brand-primary);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            margin-bottom: 0.3rem;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .ai-reasoning-body {
+            font-size: 0.9rem;
+            color: #27272A;
+            line-height: 1.5;
+            font-weight: 450;
+        }
+
+        /* Card Tags Footer */
+        .card-tags-footer {
             display: flex;
             flex-wrap: wrap;
             align-items: center;
-            gap: 10px;
-            color: var(--text-muted);
-            font-size: 0.88rem;
-            margin-bottom: 0.9rem;
+            gap: 6px;
         }
 
-        .cuisine-pill {
+        .tag-pill {
             background: #F4F4F5;
             color: #3F3F46;
-            font-size: 0.78rem;
+            border: 1px solid #E4E4E7;
+            font-size: 0.75rem;
             font-weight: 600;
             padding: 2px 8px;
             border-radius: 6px;
         }
 
-        /* AI Recommendation Box */
-        .ai-explanation-box {
-            background: var(--brand-primary-light);
-            border: 1px solid #FFE4E6;
-            border-radius: 12px;
-            padding: 1rem 1.25rem;
-            margin-top: 0.8rem;
-        }
-
-        .ai-explanation-header {
-            font-size: 0.8rem;
-            font-weight: 800;
-            color: var(--brand-primary);
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            margin-bottom: 0.4rem;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .ai-explanation-text {
-            font-size: 0.92rem;
-            color: #27272A;
-            line-height: 1.55;
-            font-weight: 450;
-        }
-
-        .ai-explanation-footer {
-            margin-top: 0.6rem;
-            font-size: 0.72rem;
-            color: #9CA3AF;
-            font-weight: 600;
-            text-transform: uppercase;
-            letter-spacing: 0.04em;
-        }
-
         /* Empty State */
-        .empty-state-box {
+        .empty-state-wrap {
             background: #FFFFFF;
             border: 1px dashed #D1D5DB;
-            border-radius: 16px;
+            border-radius: 14px;
             padding: 2.5rem 1.5rem;
             text-align: center;
-            margin: 2rem 0;
+            margin: 1.5rem 0;
         }
 
         .empty-state-icon {
-            font-size: 2.5rem;
-            margin-bottom: 0.75rem;
+            font-size: 2.2rem;
+            margin-bottom: 0.5rem;
         }
 
-        .empty-state-title {
-            font-size: 1.2rem;
+        .empty-state-heading {
+            font-size: 1.15rem;
             font-weight: 800;
             color: var(--text-heading);
-            margin-bottom: 0.4rem;
+            margin-bottom: 0.35rem;
         }
 
-        .empty-state-desc {
-            font-size: 0.92rem;
+        .empty-state-sub {
+            font-size: 0.9rem;
             color: var(--text-muted);
-            max-width: 480px;
-            margin: 0 auto 1.25rem auto;
-            line-height: 1.5;
+            max-width: 460px;
+            margin: 0 auto;
+            line-height: 1.45;
         }
 
         /* Sidebar Styling */
         section[data-testid="stSidebar"] {
             background-color: #FFFFFF !important;
-            border-right: 1px solid #E5E7EB !important;
+            border-right: 1px solid var(--border-subtle) !important;
+        }
+
+        .sidebar-brand-title {
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: var(--text-heading);
+        }
+
+        .sidebar-brand-sub {
+            font-size: 0.78rem;
+            color: var(--text-muted);
+            margin-bottom: 1rem;
+            padding-bottom: 0.75rem;
+            border-bottom: 1px solid var(--border-subtle);
+        }
+
+        .step-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 8px;
+            margin-bottom: 0.6rem;
+            font-size: 0.85rem;
+            color: var(--text-body);
+            line-height: 1.4;
+        }
+
+        .step-num {
+            font-weight: 800;
+            color: var(--brand-primary);
+            font-size: 0.8rem;
+            min-width: 20px;
         }
         </style>
         """
     )
 
 
-# --- CACHED RUNTIME LOADER ---
-@st.cache_resource(show_spinner="Connecting to restaurant catalog...")
+# --- RUNTIME LOADER ---
+@st.cache_resource(show_spinner="Connecting to dining catalog...")
 def get_runtime() -> AppContext:
     return load_runtime()
 
@@ -450,21 +444,21 @@ def _index_or_zero(items: list[str], value: str) -> int:
         return 0
 
 
-# --- COMPONENT HELPERS ---
+# --- UI COMPONENT FUNCTIONS ---
 def render_header() -> None:
-    """Render the top brand bar with product name and AI badge."""
+    """Render compact brand header."""
     st.html(
         """
-        <div class="brand-bar">
-            <div class="brand-title-wrap">
-                <div class="brand-icon-box">🍽️</div>
+        <div class="brand-header-row">
+            <div class="brand-logo-area">
+                <div class="brand-logo-icon">🍽️</div>
                 <div>
-                    <div class="brand-name">AI Restaurant Finder</div>
-                    <div class="brand-tagline">Personalized restaurant recommendations powered by AI</div>
+                    <div class="brand-product-title">AI Restaurant Finder</div>
+                    <div class="brand-product-sub">Personalized restaurant recommendations powered by AI</div>
                 </div>
             </div>
             <div>
-                <span class="ai-status-pill">✨ AI-POWERED</span>
+                <span class="ai-badge-pill">✨ AI-POWERED</span>
             </div>
         </div>
         """
@@ -472,28 +466,99 @@ def render_header() -> None:
 
 
 def render_hero() -> None:
-    """Render the hero headline and value proposition."""
+    """Render compact hero section."""
     st.html(
         """
-        <div class="hero-container">
-            <div class="hero-headline">Find a restaurant you'll actually love.</div>
-            <div class="hero-subtitle">
-                Discover your next dining spot tailored to your neighborhood, budget tier, favorite cuisine, and exact dining mood.
+        <div class="hero-wrap">
+            <div class="hero-title">Find a restaurant you'll actually love.</div>
+            <div class="hero-desc">
+                Tell us where you're dining, what you want to eat, and your budget. Our AI will find the best matches for you.
             </div>
         </div>
         """
     )
 
 
+def render_sidebar(ctx: AppContext) -> None:
+    """Render compact, product-level sidebar."""
+    with st.sidebar:
+        st.html(
+            """
+            <div class="sidebar-brand-title">🍽️ AI Restaurant Finder</div>
+            <div class="sidebar-brand-sub">Intelligent Dining Recommendations</div>
+            """
+        )
+
+        st.markdown("**HOW IT WORKS**")
+        st.html(
+            """
+            <div class="step-item">
+                <span class="step-num">01</span>
+                <span>Tell us what you're looking for</span>
+            </div>
+            <div class="step-item">
+                <span class="step-num">02</span>
+                <span>AI finds matching restaurants</span>
+            </div>
+            <div class="step-item">
+                <span class="step-num">03</span>
+                <span>Get personalized recommendations</span>
+            </div>
+            """
+        )
+
+        st.markdown("<div style='height: 8px;'></div>", unsafe_allow_html=True)
+
+        with st.expander("Catalog Scope", expanded=False):
+            st.caption("Preprocessed & verified Zomato dining catalog:")
+            st.write(
+                f"- **City**: Bengaluru\n"
+                f"- **Catalog Records**: {ctx.status.restaurant_count:,}\n"
+                f"- **Neighborhoods**: {len(ctx.catalog.locations)}\n"
+                f"- **Cuisines**: {len(ctx.catalog.cuisines)}"
+            )
+
+        st.markdown("---")
+        if st.button("🔄 Reset Search Preferences", use_container_width=True):
+            st.session_state.pref_location = "Koramangala 5th Block" if "Koramangala 5th Block" in ctx.catalog.locations else ctx.catalog.locations[0]
+            st.session_state.pref_budget = "Medium (₹500 - ₹1,500)"
+            st.session_state.pref_cuisine = "North Indian"
+            st.session_state.pref_min_rating = "4.0+ Stars"
+            st.session_state.pref_additional = ""
+            st.session_state.pop("search_result", None)
+            st.session_state.pop("search_error", None)
+            st.session_state.pop("last_search_summary", None)
+            st.rerun()
+
+
+def render_quick_inspiration() -> None:
+    """Render compact pill/chip buttons for one-click cravings."""
+    st.html("<div class='craving-title'>✨ TRY A CRAVING</div>")
+    q_col1, q_col2, q_col3, q_col4 = st.columns(4)
+
+    if q_col1.button("🌃 Rooftop & Drinks", use_container_width=True):
+        st.session_state.pref_additional = "rooftop terrace with city views and craft cocktails"
+        st.rerun()
+    if q_col2.button("🍗 Butter Chicken", use_container_width=True):
+        st.session_state.pref_additional = "authentic rich butter chicken, garlic naan and family seating"
+        st.rerun()
+    if q_col3.button("☕ Cozy Cafe", use_container_width=True):
+        st.session_state.pref_additional = "cozy quiet cafe with artisan coffee and gourmet pasta"
+        st.rerun()
+    if q_col4.button("🥘 Ghee Roast Dosa", use_container_width=True):
+        st.session_state.pref_additional = "crispy ghee roast masala dosa with fresh coconut chutney"
+        st.rerun()
+
+
 def render_search_panel(ctx: AppContext) -> bool:
-    """Render the structured 3-row preference panel and return submission state."""
+    """Render the structured preference panel with 2-column layout."""
     loc_options = ctx.catalog.locations
     cui_options = ctx.catalog.cuisines
 
     budget_options = [
         "Medium (₹500 - ₹1,500)",
-        "Low (Under ₹500)",
-        "High (₹1,500+)",
+        "Budget-Friendly (< ₹500)",
+        "Fine Dining (₹1,500+)",
     ]
 
     rating_options = [
@@ -504,80 +569,62 @@ def render_search_panel(ctx: AppContext) -> bool:
     ]
 
     with st.container(border=True):
-        st.html("<div class='form-section-title'>📍 WHERE & HOW MUCH</div>")
-
-        # Row 1: Location & Budget
+        # Section 1: Where & How Much
+        st.html("<div class='section-header-tag'>📍 WHERE & HOW MUCH</div>")
         r1_col1, r1_col2 = st.columns(2)
         with r1_col1:
             sel_loc = st.selectbox(
-                "Select Location / Neighborhood",
+                "Location",
                 options=loc_options,
                 index=_index_or_zero(loc_options, st.session_state.pref_location),
-                help="Neighborhood in Bengaluru to search",
             )
             st.session_state.pref_location = sel_loc
 
         with r1_col2:
             sel_bud = st.selectbox(
-                "Select Budget Tier",
+                "Budget",
                 options=budget_options,
                 index=_index_or_zero(budget_options, st.session_state.pref_budget),
-                help="Estimated dining cost for two people",
             )
             st.session_state.pref_budget = sel_bud
 
-        st.html("<div style='height: 8px;'></div>")
-        st.html("<div class='form-section-title'>🍴 FLAVORS & STANDARDS</div>")
+        st.html("<div style='height: 4px;'></div>")
 
-        # Row 2: Cuisine & Minimum Rating
+        # Section 2: Flavors & Standards
+        st.html("<div class='section-header-tag'>🍴 FLAVORS & STANDARDS</div>")
         r2_col1, r2_col2 = st.columns(2)
         with r2_col1:
             sel_cui = st.selectbox(
-                "Select Cuisine",
+                "Cuisine",
                 options=cui_options,
                 index=_index_or_zero(cui_options, st.session_state.pref_cuisine),
-                help="Primary cuisine preference",
             )
             st.session_state.pref_cuisine = sel_cui
 
         with r2_col2:
             sel_rat = st.selectbox(
-                "Minimum Dining Rating",
+                "Minimum Rating",
                 options=rating_options,
                 index=_index_or_zero(rating_options, st.session_state.pref_min_rating),
-                help="Minimum diner rating on a 5-star scale",
             )
             st.session_state.pref_min_rating = sel_rat
 
-        st.html("<div style='height: 8px;'></div>")
-        st.html("<div class='form-section-title'>✨ SPECIFIC VIBE & CRAVINGS</div>")
+        st.html("<div style='height: 4px;'></div>")
 
-        # Row 3: Additional Preferences & Natural Language Input
-        pref_text = st.text_input(
-            "Additional Preferences (Optional)",
+        # Section 3: Specific Vibe & Cravings
+        st.html("<div class='section-header-tag'>✨ SPECIFIC VIBE & CRAVINGS</div>")
+        pref_val = st.text_input(
+            "Additional Preferences",
             value=st.session_state.pref_additional,
             placeholder="e.g., quiet romantic dinner, authentic woodfired pizza, outdoor garden seating...",
-            help="Tell AI anything specific: vibes, must-have dishes, dietary constraints, or occasions.",
+            label_visibility="collapsed",
         )
-        st.session_state.pref_additional = pref_text
+        st.session_state.pref_additional = pref_val
 
         # Quick inspiration chips
-        st.html("<div class='chip-label'>Quick inspiration:</div>")
-        chip_cols = st.columns(4)
-        if chip_cols[0].button("🌆 Rooftop & Drinks", use_container_width=True):
-            st.session_state.pref_additional = "rooftop terrace with city views and craft cocktails"
-            st.rerun()
-        if chip_cols[1].button("🥘 Butter Chicken", use_container_width=True):
-            st.session_state.pref_additional = "authentic rich butter chicken, garlic naan and family seating"
-            st.rerun()
-        if chip_cols[2].button("☕ Cozy Cafe", use_container_width=True):
-            st.session_state.pref_additional = "cozy quiet cafe with artisan coffee and gourmet pasta"
-            st.rerun()
-        if chip_cols[3].button("🥞 Ghee Roast Dosa", use_container_width=True):
-            st.session_state.pref_additional = "crispy ghee roast masala dosa with fresh coconut chutney"
-            st.rerun()
+        render_quick_inspiration()
 
-        st.html("<div style='height: 12px;'></div>")
+        st.html("<div style='height: 8px;'></div>")
 
         # Primary Call to Action
         submitted = st.button(
@@ -598,25 +645,28 @@ def render_search_summary(
     count: int,
     used_fallback: bool,
 ) -> None:
-    """Display a clean summary card of the active search criteria above results."""
-    fallback_badge = (
-        "<span style='background:#FEF3C7; color:#92400E; border:1px solid #FDE68A; font-size:0.75rem; font-weight:700; padding:2px 8px; border-radius:6px; margin-left:8px;'>Heuristic Ranking Mode</span>"
-        if used_fallback
-        else ""
-    )
+    """Render clean search summary above recommendation results."""
+    # Clean budget display string
+    if "Budget-Friendly" in budget_label or "<" in budget_label:
+        budget_disp = "< ₹500"
+    elif "Fine Dining" in budget_label or "1,500+" in budget_label:
+        budget_disp = "₹1,500+"
+    else:
+        budget_disp = "₹500–₹1,500"
+
+    # Clean rating display string
+    rating_disp = rating_label.replace(" Stars", "")
 
     st.html(
         f"""
-        <div class="search-summary-card">
-            <div class="search-summary-header">Restaurants matching your search</div>
-            <div class="search-criteria-badges">
-                <span class="criteria-pill">📍 {html.escape(location)}</span>
-                <span class="criteria-pill">🍴 {html.escape(cuisine)}</span>
-                <span class="criteria-pill">💰 {html.escape(budget_label)}</span>
-                <span class="criteria-pill">⭐ {html.escape(rating_label)}</span>
-            </div>
-            <div class="summary-count-line">
-                ✨ {count} restaurant{"s" if count != 1 else ""} curated & ranked by AI {fallback_badge}
+        <div style="margin-top: 1rem;">
+            <div class="picks-header-title">✨ YOUR AI PICKS</div>
+            <div class="picks-header-sub">{count} restaurant{"s" if count != 1 else ""} matched your preferences</div>
+            <div class="summary-pill-container">
+                <span class="summary-badge">📍 {html.escape(location)}</span>
+                <span class="summary-badge">🍛 {html.escape(cuisine)}</span>
+                <span class="summary-badge">💰 {html.escape(budget_disp)}</span>
+                <span class="summary-badge">⭐ {html.escape(rating_disp)}</span>
             </div>
         </div>
         """
@@ -633,51 +683,52 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
     explanation = decode_display_text(item.explanation)
     rank = item.rank
 
-    # Rank badge treatment
+    # Ranking label
     if rank == 1:
-        rank_badge_html = '<span class="rank-badge-top">👑 #1 TOP MATCH</span>'
-        card_class = "restaurant-card top-match-card"
-    elif rank == 2:
-        rank_badge_html = '<span class="rank-badge-standard">🥈 #2 GREAT MATCH</span>'
-        card_class = "restaurant-card"
-    elif rank == 3:
-        rank_badge_html = '<span class="rank-badge-standard">🥉 #3 RECOMMENDED</span>'
-        card_class = "restaurant-card"
+        rank_label = '<span class="rank-label-top">#1 Top Match</span>'
+        card_class = "recommendation-card top-tier-card"
     else:
-        rank_badge_html = f'<span class="rank-badge-standard">#{rank} RECOMMENDED</span>'
-        card_class = "restaurant-card"
+        rank_label = f'<span class="rank-label-normal">#{rank}</span>'
+        card_class = "recommendation-card"
 
-    # Cuisine pill tags
-    cuisine_list = [c.strip() for c in cui.split(",") if c.strip()]
-    cuisines_html = "".join(f'<span class="cuisine-pill">{html.escape(c)}</span>' for c in cuisine_list[:4])
+    # Budget tier symbol based on item.budget_band
+    band = (item.budget_band or "").lower()
+    if band == "low":
+        tier_symbol = "₹"
+    elif band == "high":
+        tier_symbol = "₹₹₹"
+    else:
+        tier_symbol = "₹₹"
 
-    source_label = "Grounded by Groq LLM" if item.source == "llm" else "Deterministic Fallback Score"
+    # First cuisine for primary tag
+    first_cuisine = cui.split(",")[0].strip() if cui else "Dining"
 
     card_html = f"""
     <div class="{card_class}">
-        <div class="card-header-row">
-            <div>
-                {rank_badge_html}
+        <div class="card-top-bar">
+            <div class="card-rank-title-group">
+                {rank_label}
+                <span class="restaurant-title">{html.escape(name)}</span>
             </div>
             <div>
-                <span class="rating-badge-pill">★ {html.escape(rating)}</span>
+                <span class="rating-badge">⭐ {html.escape(rating)}</span>
             </div>
         </div>
 
-        <div class="restaurant-name">{html.escape(name)}</div>
-
-        <div class="card-meta-row">
-            <span>📍 {html.escape(loc)}</span>
-            <span>•</span>
-            <span>💰 {html.escape(cost)} for two</span>
-            <span>•</span>
-            <div style="display:inline-flex; gap:4px; align-items:center;">{cuisines_html}</div>
+        <div class="card-subtext">
+            {html.escape(cui)} • ₹{html.escape(cost)} for two
         </div>
 
-        <div class="ai-explanation-box">
-            <div class="ai-explanation-header">✨ Why AI recommends this</div>
-            <div class="ai-explanation-text">"{html.escape(explanation)}"</div>
-            <div class="ai-explanation-footer">Analysis Engine: {source_label}</div>
+        <div class="ai-reasoning-container">
+            <div class="ai-reasoning-title">✨ WHY AI RECOMMENDS THIS</div>
+            <div class="ai-reasoning-body">"{html.escape(explanation)}"</div>
+        </div>
+
+        <div class="card-tags-footer">
+            <span class="tag-pill">{html.escape(first_cuisine)}</span>
+            <span class="tag-pill">{html.escape(rating)} ★</span>
+            <span class="tag-pill">{html.escape(tier_symbol)}</span>
+            <span class="tag-pill">📍 {html.escape(loc)}</span>
         </div>
     </div>
     """
@@ -685,35 +736,24 @@ def render_restaurant_card(item: RecommendationCard, is_top: bool) -> None:
 
 
 def render_empty_state(case: str, message: str | None = None, hints: list[str] | None = None) -> None:
-    """Render polished empty states with actionable guidance."""
-    if case == "no_match":
-        title = "Nothing matched your search"
-        desc = (
-            message
-            or "We couldn't find restaurants matching all your criteria simultaneously in this area. "
-            "Try adjusting your filters to expand the search."
-        )
-        icon = "🔍"
-    else:
-        title = "Recommendations could not be generated"
-        desc = (
-            message
-            or "The recommendation engine was unable to synthesize grounded recommendations for this query. "
-            "Please try refining your preferences."
-        )
-        icon = "🍽️"
+    """Render clean, friendly empty state."""
+    title = "No restaurants matched your search."
+    desc = (
+        message
+        or "Try changing your cuisine, budget, location, or minimum rating."
+    )
 
     hints_html = ""
     if hints:
         hints_items = "".join(f"<li>{html.escape(h)}</li>" for h in hints)
-        hints_html = f"<ul style='text-align:left; display:inline-block; margin-top:0.5rem; font-size:0.88rem; color:#4B5563;'>{hints_items}</ul>"
+        hints_html = f"<ul style='text-align:left; display:inline-block; margin-top:0.6rem; font-size:0.85rem; color:#4B5563;'>{hints_items}</ul>"
 
     st.html(
         f"""
-        <div class="empty-state-box">
-            <div class="empty-state-icon">{icon}</div>
-            <div class="empty-state-title">{html.escape(title)}</div>
-            <div class="empty-state-desc">{html.escape(desc)}</div>
+        <div class="empty-state-wrap">
+            <div class="empty-state-icon">🍽️</div>
+            <div class="empty-state-heading">{html.escape(title)}</div>
+            <div class="empty-state-sub">{html.escape(desc)}</div>
             {hints_html}
         </div>
         """
@@ -721,80 +761,40 @@ def render_empty_state(case: str, message: str | None = None, hints: list[str] |
 
 
 def render_developer_details(res: RecommendResponse, ctx: AppContext) -> None:
-    """Collapsible expander containing runtime diagnostics."""
-    with st.expander("🛠️ Developer & Pipeline Details"):
+    """Collapsible expander containing technical pipeline diagnostics."""
+    with st.expander("Developer details", expanded=False):
         d_col1, d_col2, d_col3 = st.columns(3)
         with d_col1:
-            st.metric("Total Catalog", f"{ctx.status.restaurant_count:,}")
+            st.caption("Catalog Size")
+            st.write(f"**{ctx.status.restaurant_count:,}** restaurants")
         with d_col2:
-            st.metric("Groq LLM Active", "Yes" if ctx.status.groq_configured else "Fallback")
+            st.caption("Recommendation Source")
+            st.write(f"**{res.state.title()}** ({'Fallback' if res.used_fallback else 'LLM'})")
         with d_col3:
-            st.metric("Response State", res.state.title())
+            st.caption("Reasoning Model")
+            st.write(f"`{res.llm_model or 'Deterministic Heuristic'}`")
 
         if res.filter_diagnostics:
             fd = res.filter_diagnostics
-            st.caption("Deterministic Screening Pipeline Funnel:")
+            st.caption("Candidate Screening Funnel:")
             st.write(
                 f"- Total records examined: **{fd.total_records:,}**\n"
                 f"- After location filter: **{fd.after_location:,}**\n"
                 f"- After budget tier filter: **{fd.after_budget:,}**\n"
                 f"- After cuisine match: **{fd.after_cuisine:,}**\n"
                 f"- After minimum rating: **{fd.after_rating:,}**\n"
-                f"- Candidates supplied to reasoning engine: **{fd.shortlist_count}**"
+                f"- Final shortlist to reasoning engine: **{fd.shortlist_count}**"
             )
 
-        if res.llm_model:
-            st.caption(f"Reasoning Model: `{res.llm_model}`")
-
-        if res.used_fallback:
-            st.warning(f"Fallback reason: {res.fallback_reason or 'API limits or offline mode'}")
+        if res.used_fallback and res.fallback_reason:
+            st.info(f"Fallback reason: {res.fallback_reason}")
 
 
-def render_sidebar(ctx: AppContext) -> None:
-    """Render a clean, product-focused sidebar with no technical clutter."""
-    with st.sidebar:
-        st.html(
-            """
-            <div style="padding: 0.5rem 0 1rem 0; border-bottom: 1px solid #E5E7EB; margin-bottom: 1rem;">
-                <div style="font-size: 1.2rem; font-weight: 800; color: #18181B;">🍽️ AI Restaurant Finder</div>
-                <div style="font-size: 0.8rem; color: #71717A;">Intelligent Dining Recommendations</div>
-            </div>
-            """
-        )
-
-        st.markdown("### How It Works")
-        st.markdown(
-            "1. **Deterministic Screening**: Filters real restaurant records matching your location, budget band, and cuisine.\n"
-            "2. **AI Reasoning**: Analyzes trade-offs and explains *why* each spot fits your vibe.\n"
-            "3. **Zero Downtime**: Automatically falls back to deterministic heuristic ranking if API limits occur."
-        )
-
-        st.markdown("---")
-        st.markdown("### Catalog Scope")
-        st.markdown(
-            f"- **City**: Bengaluru\n"
-            f"- **Restaurants Cached**: {ctx.status.restaurant_count:,}\n"
-            f"- **Neighborhoods**: {len(ctx.catalog.locations)}\n"
-            f"- **Cuisines**: {len(ctx.catalog.cuisines)}"
-        )
-
-        st.markdown("---")
-        if st.button("🔄 Reset Search Preferences", use_container_width=True):
-            st.session_state.pref_location = "Koramangala 5th Block" if "Koramangala 5th Block" in ctx.catalog.locations else ctx.catalog.locations[0]
-            st.session_state.pref_budget = "Medium (₹500 - ₹1,500)"
-            st.session_state.pref_cuisine = "North Indian"
-            st.session_state.pref_min_rating = "4.0+ Stars"
-            st.session_state.pref_additional = "quiet rooftop dining with good ambience"
-            st.session_state.pop("search_result", None)
-            st.session_state.pop("search_error", None)
-            st.rerun()
-
-
-# --- MAIN APPLICATION CONTROLLER ---
+# --- CONTROLLER ---
 def main() -> None:
     inject_custom_css()
 
-    # Load application runtime and data catalog
+    # Load runtime
     try:
         ctx = get_runtime()
     except Exception as exc:
@@ -802,7 +802,7 @@ def main() -> None:
             "Something went wrong while initializing the restaurant catalog. Please ensure the Phase 1 cache exists.",
             icon=":material/error:",
         )
-        with st.expander("Technical details"):
+        with st.expander("Developer details"):
             st.code(str(exc))
         return
 
@@ -814,29 +814,29 @@ def main() -> None:
     st.session_state.setdefault("pref_budget", "Medium (₹500 - ₹1,500)")
     st.session_state.setdefault("pref_cuisine", "North Indian")
     st.session_state.setdefault("pref_min_rating", "4.0+ Stars")
-    st.session_state.setdefault("pref_additional", "quiet rooftop dining with good ambience")
+    st.session_state.setdefault("pref_additional", "")
 
     # Render Sidebar
     render_sidebar(ctx)
 
-    # Render Top Elements
+    # Render Header & Hero
     render_header()
     render_hero()
 
-    # Render Preference Panel
+    # Render Search Panel
     submitted = render_search_panel(ctx)
 
-    # Execute Search on Click
+    # Execute Search on Submission
     if submitted:
-        # Map human-friendly budget to backend contract
-        if "Low" in st.session_state.pref_budget:
+        # Map budget
+        if "Budget-Friendly" in st.session_state.pref_budget or "<" in st.session_state.pref_budget:
             budget_key = "low"
-        elif "High" in st.session_state.pref_budget:
+        elif "Fine Dining" in st.session_state.pref_budget or "1,500+" in st.session_state.pref_budget:
             budget_key = "high"
         else:
             budget_key = "medium"
 
-        # Map human-friendly rating to float
+        # Map rating
         rating_str = st.session_state.pref_min_rating
         if "4.5+" in rating_str:
             min_rating_val = 4.5
@@ -858,11 +858,10 @@ def main() -> None:
         )
 
         try:
-            with st.spinner("Finding your best matches... Analyzing restaurants based on your preferences..."):
+            with st.spinner("✨ Finding your best matches..."):
                 result = run_search(search_payload)
                 st.session_state.search_result = result
                 st.session_state.search_error = None
-                st.session_state.resolved_display_loc = resolved_loc
                 st.session_state.last_search_summary = {
                     "location": resolved_loc,
                     "budget": st.session_state.pref_budget,
@@ -881,16 +880,16 @@ def main() -> None:
             ]
             st.session_state.last_exception = str(exc)
 
-    # Display Results or State
+    # Render Results / Error / Empty States
     search_error = st.session_state.get("search_error")
     search_result: RecommendResponse | None = st.session_state.get("search_result")
     summary_meta = st.session_state.get("last_search_summary")
 
     if search_error:
-        for err_msg in search_error:
-            st.error(err_msg, icon="⚠️")
+        for err in search_error:
+            st.error(err, icon="⚠️")
         if st.session_state.get("last_exception"):
-            with st.expander("Technical details"):
+            with st.expander("Developer details"):
                 st.code(st.session_state.get("last_exception"))
 
     elif search_result is not None:
@@ -901,7 +900,7 @@ def main() -> None:
                 hints=search_result.refine_hints,
             )
         else:
-            # Render Search Summary
+            # Summary above results
             if summary_meta:
                 render_search_summary(
                     location=summary_meta["location"],
@@ -912,11 +911,11 @@ def main() -> None:
                     used_fallback=search_result.used_fallback or (search_result.state == "fallback"),
                 )
 
-            # Render Cards
-            for idx, card_item in enumerate(search_result.recommendations):
-                render_restaurant_card(card_item, is_top=(idx == 0))
+            # Recommendation Cards
+            for idx, card in enumerate(search_result.recommendations):
+                render_restaurant_card(card, is_top=(idx == 0))
 
-        # Developer details expander
+        # Secondary Developer details at bottom
         render_developer_details(search_result, ctx)
 
 
